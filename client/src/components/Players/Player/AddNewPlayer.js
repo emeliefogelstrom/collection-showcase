@@ -1,9 +1,13 @@
-//AddNewPlayer.js
 import React, { useCallback } from "react";
-import { Card, CardMedia, Grid, Typography } from "@material-ui/core";
+import { Typography } from "@mui/material";
+import Grid from "@mui/material/Grid";
 import { useDispatch } from "react-redux";
 import image from "../../../images/profile.png";
-import useStyles from "./styles";
+import {
+  Card as StyledCard,
+  StyledCardMedia,
+  Overlay as StyledOverlay,
+} from "./styles"; // Importera de nya stilarna
 import ScrollDialog from "../../dialog";
 import PlayerForm from "../../Admin/Player/PlayerForm";
 import { addPlayer } from "../../../actions/players";
@@ -19,7 +23,6 @@ import { addPlayer } from "../../../actions/players";
  * @returns {JSX.Element} The rendered AddNewPlayer component.
  */
 const AddNewPlayer = ({ handleOpenDialog, handleCloseDialog, openDialog }) => {
-  const classes = useStyles();
   const dispatch = useDispatch();
 
   const handleSubmit = useCallback(
@@ -68,15 +71,13 @@ const AddNewPlayer = ({ handleOpenDialog, handleCloseDialog, openDialog }) => {
 
   return (
     <Grid item xs={12} sm={6} md={4}>
-      <Card className={classes.card} raised elevation={6}>
-        <CardMedia
-          className={classes.media}
-          image={image}
-          title="Add New Player"
+      <StyledCard raised elevation={6}>
+        <StyledCardMedia
+          src={image}
+          alt="Add New Player"
           onClick={handleOpenDialog}
         />
-        <div
-          className={classes.overlay}
+        <StyledOverlay
           onClick={handleOpenDialog}
           role="button"
           tabIndex={0}
@@ -84,7 +85,7 @@ const AddNewPlayer = ({ handleOpenDialog, handleCloseDialog, openDialog }) => {
           onKeyDown={handleKeyDown}
         >
           <Typography variant="h6">Add New Player</Typography>
-        </div>
+        </StyledOverlay>
         <ScrollDialog
           title="Add New Player"
           open={openDialog}
@@ -95,7 +96,7 @@ const AddNewPlayer = ({ handleOpenDialog, handleCloseDialog, openDialog }) => {
             handleCloseUpdatePlayer={handleCloseDialog}
           />
         </ScrollDialog>
-      </Card>
+      </StyledCard>
     </Grid>
   );
 };

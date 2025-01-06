@@ -1,10 +1,23 @@
-//Main.js
 import React from "react";
 import Header from "./Header/Header";
 import Footer from "./Footer";
-import Container from "@material-ui/core/Container";
+import Container from "@mui/material/Container";
 import { useAuth } from "../Auth/AuthContext";
-import useStyles from "./styles";
+import { styled } from "@mui/material/styles"; // Importera styled från MUI
+
+// Stilad rootHeader-komponent
+const RootHeader = styled("div")(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  minHeight: "100vh", // Se till att hela sidan täcks
+}));
+
+// Stilad container-komponent
+const StyledContainer = styled(Container)(({ theme }) => ({
+  flex: 1, // Gör så att innehållet fyller den lediga platsen
+  paddingTop: theme.spacing(2),
+  paddingBottom: theme.spacing(2),
+}));
 
 /**
  * Main component serves as the primary layout structure for the application, including the header, footer, and the main content area.
@@ -14,18 +27,17 @@ import useStyles from "./styles";
  */
 const Main = ({ children }) => {
   const { isAuthenticated, logout, loading } = useAuth();
-  const classes = useStyles();
 
   if (loading) {
     return <p>Loading...</p>;
   }
 
   return (
-    <div className={classes.rootHeader}>
+    <RootHeader>
       <Header isAuthenticated={isAuthenticated} logout={logout} />
-      <Container className={classes.container}>{children}</Container>
+      <StyledContainer>{children}</StyledContainer>
       <Footer />
-    </div>
+    </RootHeader>
   );
 };
 

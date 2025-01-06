@@ -1,20 +1,18 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import Paper from "@material-ui/core/Paper";
-import Typography from "@material-ui/core/Typography";
-import Avatar from "@material-ui/core/Avatar";
-import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
+import Typography from "@mui/material/Typography";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import DOMPurify from "dompurify";
 import { useDispatch } from "react-redux";
-import Container from "@material-ui/core/Container";
-import Snackbar from "@material-ui/core/Snackbar";
-import MuiAlert from "@material-ui/lab/Alert";
+import Snackbar from "@mui/material/Snackbar";
+import MuiAlert from "@mui/material/Alert";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "./AuthContext";
-import { useStyles } from "./styles";
 import LoginForm from "./LoginForm";
+import { StyledContainer, StyledPaper, StyledAvatar } from "./styles";
 
 const initialState = { username: "", password: "" };
 
-// Snackbar component
+// Snackbar Component
 const AlertSnackbar = ({ open, message, onClose }) => (
   <Snackbar open={open} autoHideDuration={5000} onClose={onClose}>
     <MuiAlert elevation={6} variant="filled" severity="error" onClose={onClose}>
@@ -39,7 +37,6 @@ function Login() {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [loading, setLoading] = useState(false);
-  const classes = useStyles();
   const isMounted = useRef(true);
 
   useEffect(() => {
@@ -50,7 +47,8 @@ function Login() {
 
   const handleChange = useCallback(
     (e) => {
-      setFormData({ ...formData, [e.target.name]: e.target.value });
+      const sanitizedValue = DOMPurify.sanitize(e.target.value);
+      setFormData({ ...formData, [e.target.name]: sanitizedValue });
     },
     [formData]
   );
@@ -73,7 +71,7 @@ function Login() {
         }
       }
     },
-    [formData, navigate, dispatch, isMounted, login]
+    [formData, navigate, dispatch, login]
   );
 
   const handleShowPassword = useCallback(
@@ -86,14 +84,12 @@ function Login() {
   }, []);
 
   return (
-    <Container component="main" maxWidth="xs">
-      <Paper elevation={10} className={classes.paper} component="div">
-        <Avatar component="div" className={classes.avatar}>
+    <StyledContainer component="main" maxWidth="xs">
+      <StyledPaper elevation={10}>
+        <StyledAvatar>
           <LockOutlinedIcon />
-        </Avatar>
-        <Typography variant="h5" component="h5">
-          Sign In
-        </Typography>
+        </StyledAvatar>
+        <Typography variant="h5">Sign In</Typography>
         <LoginForm
           handleChange={handleChange}
           handleSignIn={handleSignIn}
@@ -106,8 +102,8 @@ function Login() {
           message={snackbarMessage}
           onClose={handleCloseSnackbar}
         />
-      </Paper>
-    </Container>
+      </StyledPaper>
+    </StyledContainer>
   );
 }
 

@@ -20,10 +20,15 @@ export const addCategory = (req, res) => {
 
     const newCategory = new Menu({ mainMenu: req.body.newCategory });
 
-    await newCategory
-      .save()
-      .then((newCategory) => res.json("Category " + newCategory + " added!"))
-      .catch((err) => res.sendStatus(400).json("Error: " + err));
+    try {
+      const savedCategory = await newCategory.save();
+      // Hämta hela menyn (eller alla menyer) efter att den nya kategorin har sparats
+      const updatedMenu = await Menu.find(); // Hämta alla menyer för att uppdatera frontend
+      return res.json(updatedMenu); // Skicka tillbaka hela menyn
+    } catch (err) {
+      console.error("Error: ", err);
+      return res.status(400).json("Error: " + err);
+    }
   });
 };
 
@@ -42,25 +47,18 @@ export const addSubCategory = async (req, res) => {
       function (err, menu) {
         if (err) {
           console.log(err);
-          return res.sendStatus(500);
+          return res.status(500).send({ message: "Error updating menu" });
         }
         if (!menu) {
-          return res.sendStatus(404);
+          return res.status(404).send({ message: "Menu not found" });
         }
-        if (menu) {
-          menu.save(function (err) {
-            if (err) {
-              res.send("Error: ", err);
-            } else {
-              return res.sendStatus(200);
-            }
-          });
-        }
+        // Skicka tillbaka det uppdaterade menyn
+        return res.status(200).send(menu);
       }
     );
   } catch (err) {
     console.log("Error: " + err);
-    return false;
+    return res.status(500).send({ message: "Internal server error" });
   }
 };
 
@@ -72,13 +70,25 @@ export const addSubCategory = async (req, res) => {
  */
 export const deleteCategory = async (req, res) => {
   const { id } = req.params;
+  console.log("id: ", id);
+  try {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(404).send("No category with that id");
+    }
 
-  if (!mongoose.Types.ObjectId.isValid(id))
-    return res.status(404).send("No category with that id");
+    const deletedCategory = await Menu.findByIdAndRemove(id);
 
-  await Menu.findByIdAndRemove(id);
+    if (!deletedCategory) {
+      return res.status(404).send("Category not found");
+    }
 
-  res.json({ message: "Category deleted successfully" });
+    // Hämta hela uppdaterade menyn eller lista
+    const updatedMenu = await Menu.find();
+    res.json(updatedMenu);
+  } catch (error) {
+    console.error("Error:", error);
+    res.sendStatus(500);
+  }
 };
 
 /**
@@ -89,21 +99,23 @@ export const deleteCategory = async (req, res) => {
  */
 export const deleteSubCategory = async (req, res) => {
   try {
-    const { categoryId, subCategoryName } = req.body;
+    const { categoryId, subCategoryName } = req.query;
 
     const category = await Menu.findById(categoryId);
-
     if (!category) {
       return res.status(404).send("No category with that id");
     }
 
-    category.subMenu = category.subMenu.filter(
-      (subCategory) => subCategory.name !== subCategoryName
+    // Uppdatera subMenu genom att ta bort subCategory
+    await Menu.updateOne(
+      { _id: categoryId },
+      { $pull: { subMenu: subCategoryName } }
     );
 
-    await category.save();
-
-    res.sendStatus(200);
+    // Hämta hela uppdaterade menyn
+    const updatedMenu = await Menu.find();
+    console.log("menu: ", updatedMenu);
+    res.json(updatedMenu); // Skicka tillbaka hela menyn, inte bara kategorin
   } catch (error) {
     console.error("Error:", error);
     res.sendStatus(500);

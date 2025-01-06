@@ -1,9 +1,24 @@
-//LanguageToggle.js
 import React, { useCallback, useEffect } from "react";
-import { Button } from "@material-ui/core";
+import Button from "@mui/material/Button";
 import { useTranslation } from "react-i18next";
 import Cookies from "js-cookie";
-import { useStyles } from "./styles";
+import { styled } from "@mui/material/styles";
+
+// Skapa en stilad knappkomponent
+const LanguageButton = styled(Button)(({ theme }) => ({
+  borderRadius: theme.spacing(2),
+  color: theme.palette.primary.contrastText,
+  padding: theme.spacing(1, 2),
+  backgroundColor: theme.palette.primary.light,
+  transition: "background-color 0.3s",
+  "&:focus": {
+    backgroundColor: theme.palette.primary.light,
+    outline: "none",
+  },
+  "&:active": {
+    backgroundColor: theme.palette.primary.main,
+  },
+}));
 
 /**
  * LanguageToggle component allows users to switch between different languages.
@@ -12,25 +27,41 @@ import { useStyles } from "./styles";
  */
 const LanguageToggle = () => {
   const { i18n } = useTranslation();
-  const classes = useStyles();
 
   useEffect(() => {
+    // När komponenten monteras, kontrollera om en språk-cookie finns
     const savedLanguage = Cookies.get("language");
-    if (savedLanguage && savedLanguage !== i18n.language) {
+    if (savedLanguage) {
       i18n.changeLanguage(savedLanguage);
+    } else {
+      // Standard till norska om ingen språk-cookie hittas
+      i18n.changeLanguage("no");
     }
   }, [i18n]);
 
+  /**
+   * Växlar språket mellan norska och engelska.
+   * Om användaren har accepterat cookies, sparas det valda språket i en cookie.
+   */
   const toggleLanguage = useCallback(() => {
     const newLanguage = i18n.language === "no" ? "en" : "no";
     i18n.changeLanguage(newLanguage);
-    Cookies.set("language", newLanguage, { expires: 365 }); // Store language cookie for 1 year
+
+    // Kontrollera om cookies har accepterats innan språk-cookien sätts
+    const consent = Cookies.get("cookieConsent");
+    if (consent === "true") {
+      Cookies.set("language", newLanguage, {
+        expires: 365,
+        secure: true,
+        httpOnly: true,
+      });
+    }
   }, [i18n]);
 
   return (
-    <Button className={classes.button} onClick={toggleLanguage}>
+    <LanguageButton onClick={toggleLanguage}>
       {i18n.language === "no" ? "En" : "No"}
-    </Button>
+    </LanguageButton>
   );
 };
 

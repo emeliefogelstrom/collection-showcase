@@ -1,16 +1,54 @@
 import React from "react";
-import Grid from "@material-ui/core/Grid";
-import Typography from "@material-ui/core/Typography";
-import Button from "@material-ui/core/Button";
-import useStyles from "./styles";
+import Grid from "@mui/material/Grid";
+import Typography from "@mui/material/Typography";
+import Button from "@mui/material/Button";
+import { styled } from "@mui/material/styles";
 import Soccer1 from "../../../images/soccer1.png";
 
+// Styled Components
+const OuterContainer = styled(Grid)({
+  flexGrow: 1,
+  backgroundColor: "black",
+});
+
+const TextContainer = styled(Grid)(({ theme }) => ({
+  flex: 1,
+  maxWidth: "75%",
+  padding: theme.spacing(2),
+  margin: "5rem",
+  color: "white",
+}));
+
+const ImageContainer = styled("div")({
+  flex: 1,
+  position: "relative",
+  marginBottom: "16px", // theme.spacing(2)
+});
+
+const StyledImage = styled("img")({
+  marginTop: "5rem",
+  marginLeft: "0.5rem",
+  width: "80%",
+  height: "auto",
+  objectFit: "cover",
+  borderRadius: 0,
+});
+
+const ReadMoreButton = styled(Button)(({ theme }) => ({
+  color: "white",
+  borderColor: "white",
+  "&:hover": {
+    color: "black",
+    backgroundColor: "white",
+  },
+}));
+
 // Separate component for the image section
-const ImageSection = ({ classes }) => (
+const ImageSection = () => (
   <Grid item xs={12}>
-    <div className={classes.imageContainer}>
-      <img className={classes.imageAbout} src={Soccer1} alt="Bild" />
-    </div>
+    <ImageContainer>
+      <StyledImage src={Soccer1} alt="Bild" />
+    </ImageContainer>
   </Grid>
 );
 
@@ -21,19 +59,10 @@ const ImageSection = ({ classes }) => (
  * @returns {JSX.Element} The rendered About component.
  */
 const About = () => {
-  const classes = useStyles();
-
   return (
-    <Grid container spacing={3} className={classes.outerContainer}>
+    <OuterContainer container spacing={3}>
       {/* Vänster sida */}
-      <Grid
-        item
-        xs={12}
-        sm={12}
-        md={6}
-        lg={6}
-        className={classes.textContainer}
-      >
+      <TextContainer item xs={12} sm={12} md={6} lg={6}>
         <Typography variant="h4" gutterBottom>
           About
         </Typography>
@@ -44,20 +73,16 @@ const About = () => {
           incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam
           quis nostrud exercitation ullamco laboris nisi ut.
         </Typography>
-        <Button
-          variant="outlined"
-          color="primary"
-          className={classes.readMoreButton}
-        >
+        <ReadMoreButton variant="outlined" color="primary">
           Read more
-        </Button>
-      </Grid>
+        </ReadMoreButton>
+      </TextContainer>
 
       {/* Höger sida med separat bildsektion */}
       <Grid item xs={12} sm={12} md={6} lg={6}>
-        <ImageSection classes={classes} />
+        <ImageSection />
       </Grid>
-    </Grid>
+    </OuterContainer>
   );
 };
 

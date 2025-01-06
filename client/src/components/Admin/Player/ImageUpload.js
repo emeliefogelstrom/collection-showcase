@@ -1,7 +1,7 @@
 //ImageUpload.js
-import React, { useEffect } from "react";
-import IconButton from "@material-ui/core/IconButton";
-import DeleteIcon from "@material-ui/icons/Delete";
+import React from "react";
+import IconButton from "@mui/material/IconButton";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 /**
  * ImageUpload component allows users to upload and preview images,
@@ -19,10 +19,6 @@ function ImageUpload({
   handleRemoveImage,
   existingImages,
 }) {
-  useEffect(() => {
-    console.log("exist: ", existingImages);
-  }, [existingImages]);
-
   return (
     <div>
       <input

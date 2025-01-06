@@ -1,7 +1,7 @@
 //PlayerData.js
 import React from "react";
-import TextField from "@material-ui/core/TextField";
-import TextareaAutosize from "@material-ui/core/TextareaAutosize";
+import TextField from "@mui/material/TextField";
+import TextareaAutosize from "@mui/material/TextareaAutosize";
 
 /**
  * Component for displaying and editing player data.

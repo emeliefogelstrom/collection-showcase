@@ -3,6 +3,7 @@ import {
   START_LOADING,
   END_LOADING,
   FETCH_PLAYERS,
+  FETCH_PLAYERS_BY_MENU,
   FETCH_PLAYERS_BY_SEARCH,
   FETCH_PLAYER_DETAILS,
   ADD_PLAYER,
@@ -44,6 +45,17 @@ const playersReducer = (state = initialState, action) => {
       return { ...state, isLoading: false }; // Set loading state to false
     case FETCH_PLAYERS:
       return { ...state, players: action.payload }; // Update state with the fetched players
+    case FETCH_PLAYERS_BY_MENU: {
+      const { data, currentPage, numberOfPages, totalPlayers } = action.payload;
+      return {
+        ...state,
+        filteredPlayers: data, // Uppdatera spelarna
+        currentPage, // Sätt aktuell sida
+        numberOfPages, // Sätt totalt antal sidor
+        totalPlayers, // Sätt totalt antal spelare
+        isLoading: false, // Avsluta laddning
+      };
+    }
     case FETCH_PLAYERS_BY_SEARCH:
       return {
         ...state,
@@ -56,7 +68,6 @@ const playersReducer = (state = initialState, action) => {
       return { ...state, player: action.payload }; // Set the selected player's details
     case ADD_PLAYER: {
       const addedPlayers = [...state.players, action.payload];
-      console.log("ADD_PLAYER: ", action.payload);
       return {
         ...state,
         players: addedPlayers, // Add the new player to the full list

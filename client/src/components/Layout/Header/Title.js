@@ -1,8 +1,16 @@
-// Title.js
 import React from "react";
-import Typography from "@material-ui/core/Typography";
+import Typography from "@mui/material/Typography";
 import { Link } from "react-router-dom";
-import useStyles from "../styles";
+import { styled } from "@mui/material/styles"; // Importera styled från MUI
+
+// Stilad Title-komponent
+const StyledTitle = styled(Typography)(({ theme }) => ({
+  color: "inherit",
+  textDecoration: "none", // Se till att länken inte har någon undermarkering
+  "&:hover": {
+    textDecoration: "underline", // Understryk titeln vid hover
+  },
+}));
 
 /**
  * Title component renders the application's main title, styled as a clickable link that navigates to the homepage.
@@ -10,17 +18,10 @@ import useStyles from "../styles";
  * @returns {JSX.Element} The rendered Title component.
  */
 const Title = () => {
-  const classes = useStyles();
   return (
-    <Typography
-      variant="h6"
-      color="inherit"
-      className={classes.title}
-      component={Link}
-      to="./../"
-    >
+    <StyledTitle variant="h6" component={Link} to="./../">
       Norsk Fotballdraktmuseum
-    </Typography>
+    </StyledTitle>
   );
 };
 

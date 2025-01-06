@@ -26,23 +26,53 @@ export const getPlayer = async (req, res) => {
  * @param {object} res - The response object for sending responses.
  */
 export const getPlayers = async (req, res) => {
-  const { key } = req.query;
+  const { key, page } = req.query;
 
-  const [mainCategory, subCategory] = key.split(",");
+  // Dela upp kategorierna från "key"
+  const [mainCategory, rawDecadeStart] = key.split(",");
+  const match = rawDecadeStart.match(/\b\d{4}\b/);
+  const decadeStart = match ? parseInt(match[0], 10) : null;
+  const pageNumber = parseInt(page, 10) || 1;
+  const LIMIT = 9; // Antal spelare per sida
+  const startIndex = (pageNumber - 1) * LIMIT;
 
   try {
-    const players = await Player.find({
+    const decadeEnd = parseInt(decadeStart, 10) + 9;
+
+    // Filtrera och paginera spelare
+    const filteredPlayers = await Player.aggregate([
+      {
+        $match: {
+          category: {
+            $elemMatch: {
+              main: mainCategory,
+              sub: { $gte: `${decadeStart}`, $lte: `${decadeEnd}` },
+            },
+          },
+        },
+      },
+      { $sort: { "category.sub": 1, name: 1 } }, // Sortera efter år och namn
+      { $skip: startIndex }, // Hoppa över spelare för tidigare sidor
+      { $limit: LIMIT }, // Begränsa till antal per sida
+    ]);
+
+    const totalMatchingPlayers = await Player.countDocuments({
       category: {
         $elemMatch: {
           main: mainCategory,
-          sub: subCategory,
+          sub: { $gte: `${decadeStart}`, $lte: `${decadeEnd}` },
         },
       },
     });
 
-    return res.json({ data: players });
+    return res.json({
+      data: filteredPlayers,
+      currentPage: pageNumber,
+      numberOfPages: Math.ceil(totalMatchingPlayers / LIMIT),
+      totalPlayers: totalMatchingPlayers,
+    });
   } catch (error) {
-    return res.status(404).json({ message: error.message });
+    return res.status(500).json({ message: error.message });
   }
 };
 
@@ -111,12 +141,9 @@ export const getPlayersBySearch = async (req, res) => {
           infoNorwegian: 1,
         },
       },
-      {
-        $skip: startIndex,
-      },
-      {
-        $limit: LIMIT,
-      },
+      { $sort: { "category.sub": 1, name: 1 } },
+      { $skip: startIndex },
+      { $limit: LIMIT },
     ]);
 
     const totalMatchingPlayers = await Player.countDocuments({

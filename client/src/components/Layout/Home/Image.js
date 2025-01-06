@@ -1,25 +1,42 @@
-//Image.js
+import React, { useState, useEffect } from "react";
+import "./ImageFadeTransition.css";
+import Shirt1 from "../../../images/shirt1.png"; // Rätt relativ sökväg
+import Shirt2 from "../../../images/shirt2.png"; // Rätt relativ sökväg
 
-import React from "react";
-import Grid from "@material-ui/core/Grid";
-import useStyles from "./styles";
+const ImageFadeTransition = () => {
+  const [showFirstImage, setShowFirstImage] = useState(true);
 
-/**
- * Image component used to display a full-screen background image.
- *
- * This component applies a fixed soccer-themed background image to a grid container,
- * utilizing Material-UI's Grid system for layout.
- *
- * @returns {JSX.Element} - The rendered Image component with a full-screen background image.
- */
-const Image = () => {
-  const classes = useStyles();
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setShowFirstImage((prev) => !prev);
+    }, 3000); // Byter bild var tredje sekund
+    return () => clearInterval(interval);
+  }, []);
 
   return (
-    <Grid container spacing={3} className={classes.outerContainer}>
-      <div className={classes.heroImage} />
-    </Grid>
+    <div className="image-container">
+      <img
+        src={Shirt1}
+        alt="Shirt 1"
+        className={`fade-image ${showFirstImage ? "visible" : "hidden"}`}
+        style={{
+          height: "300px",
+          width: "auto",
+          objectFit: "contain", // Bevara bildens proportioner utan beskärning
+        }}
+      />
+      <img
+        src={Shirt2}
+        alt="Shirt 2"
+        className={`fade-image ${!showFirstImage ? "visible" : "hidden"}`}
+        style={{
+          height: "300px",
+          width: "auto",
+          objectFit: "contain", // Bevara bildens proportioner utan beskärning
+        }}
+      />
+    </div>
   );
 };
 
-export default Image;
+export default ImageFadeTransition;

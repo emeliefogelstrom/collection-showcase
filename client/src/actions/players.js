@@ -3,6 +3,7 @@ import {
   START_LOADING,
   END_LOADING,
   FETCH_PLAYERS,
+  FETCH_PLAYERS_BY_MENU,
   FETCH_PLAYERS_BY_SEARCH,
   FETCH_PLAYER_DETAILS,
   DELETE_PLAYER,
@@ -34,7 +35,7 @@ export const getPlayer = () => async (dispatch) => {
 export const getPlayers = (key, page) => async (dispatch) => {
   try {
     const { data } = await api.getPlayers({ key, page });
-    dispatch({ type: FETCH_PLAYERS_BY_SEARCH, payload: data });
+    dispatch({ type: FETCH_PLAYERS_BY_MENU, payload: data });
   } catch (error) {
     console.log(error);
   }
@@ -64,9 +65,7 @@ export const getPlayerById = (id) => async (dispatch) => {
  */
 export const getPlayersBySearch = (searchQuery, page) => async (dispatch) => {
   try {
-    console.log("innan data");
     const { data } = await api.getPlayersBySearch({ searchQuery, page });
-    console.log("data: ", data);
     dispatch({ type: FETCH_PLAYERS_BY_SEARCH, payload: data });
   } catch (error) {
     console.log(error);

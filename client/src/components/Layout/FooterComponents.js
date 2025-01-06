@@ -1,8 +1,30 @@
 import React from "react";
-import Typography from "@material-ui/core/Typography";
+import Typography from "@mui/material/Typography";
 import { Link } from "react-router-dom";
-import useStyles from "./styles";
+import { styled } from "@mui/material/styles";
 import { useTranslation } from "react-i18next";
+
+// Styled components
+const FooterMessageText = styled(Typography)(({ theme }) => ({
+  color: "white",
+  textAlign: "center",
+  margin: theme.spacing(2, 0),
+}));
+
+const FooterLinksText = styled(Typography)(({ theme }) => ({
+  color: "white",
+  textAlign: "center",
+  fontSize: "0.875rem",
+  marginTop: theme.spacing(1),
+}));
+
+const FooterLink = styled(Link)(({ theme }) => ({
+  color: "#FFF",
+  textDecoration: "none",
+  "&:hover": {
+    textDecoration: "underline",
+  },
+}));
 
 /**
  * FooterMessage component displays a message in the footer section
@@ -12,12 +34,11 @@ import { useTranslation } from "react-i18next";
  * @returns {JSX.Element} The rendered FooterMessage component.
  */
 const FooterMessage = () => {
-  const classes = useStyles();
   const { t } = useTranslation();
   return (
-    <Typography variant="h6" className={classes.h} component="h6">
+    <FooterMessageText variant="h6" component="h6">
       {t("welcome_message")}
-    </Typography>
+    </FooterMessageText>
   );
 };
 
@@ -29,15 +50,12 @@ const FooterMessage = () => {
  * @returns {JSX.Element} The rendered FooterLinks component.
  */
 const FooterLinks = () => {
-  const classes = useStyles();
   return (
-    <Typography variant="body2" component="h2" className={classes.colSm}>
+    <FooterLinksText variant="body2" component="h2">
       &copy;{new Date().getFullYear()}{" "}
-      <Link to="https://www.limestoneweb.se" className={classes.link}>
-        LIMESTONEWEB.SE
-      </Link>{" "}
+      <FooterLink to="https://www.limestoneweb.se">LIMESTONEWEB.SE</FooterLink>{" "}
       | All rights reserved | Terms Of Service | Privacy |
-    </Typography>
+    </FooterLinksText>
   );
 };
 

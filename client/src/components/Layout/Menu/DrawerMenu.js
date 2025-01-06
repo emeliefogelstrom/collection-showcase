@@ -1,281 +1,239 @@
-//DrawerMenu.js
 import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import Drawer from "@material-ui/core/Drawer";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemText from "@material-ui/core/ListItemText";
-import AddIcon from "@material-ui/icons/Add";
-import DeleteIcon from "@material-ui/icons/Delete";
-import CloseIcon from "@material-ui/icons/Close";
-import IconButton from "@material-ui/core/IconButton";
-import Button from "@material-ui/core/Button";
-import MenuIcon from "@material-ui/icons/Menu";
+import Drawer from "@mui/material/Drawer";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import ListItemText from "@mui/material/ListItemText";
+import AddIcon from "@mui/icons-material/Add";
+import DeleteIcon from "@mui/icons-material/Delete";
+import CloseIcon from "@mui/icons-material/Close";
+import IconButton from "@mui/material/IconButton";
+import MenuIcon from "@mui/icons-material/Menu";
 import AddCategory from "../../Admin/Category/AddCategory";
 import AddSubCategory from "../../Admin/Category/AddSubCategory";
 import DeleteCategory from "../../Admin/Category/DeleteCategory";
 import DeleteSubCategory from "../../Admin/Category/DeleteSubCategory";
 import ScrollDialog from "../../dialog";
-import { useStyles } from "./styles";
 
-/**
- * DrawerMenu component renders a navigation drawer for selecting categories and subcategories.
- *
- * @param {Array} categories - The list of categories to display in the drawer.
- * @param {boolean} isAuthenticated - Indicates whether the user is authenticated.
- * @returns {JSX.Element} The rendered DrawerMenu component.
- */
+import {
+  Button as StyledButton,
+  MainMenuContainer,
+  MainMenuItem,
+  SubMenuItem,
+  AddCategoryButton,
+  CloseMenuButton,
+} from "./styles";
+
 const DrawerMenu = ({ categories, isAuthenticated }) => {
-  const classes = useStyles();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [menu, setMenu] = useState([]);
   const [openDialog, setOpenDialog] = useState(false);
   const [dialogContent, setDialogContent] = useState(null);
   const navigate = useNavigate();
-  const players = useSelector((state) => state.players.players); // Alla spelare
+  const players = useSelector((state) => state.players.players);
 
   const filterCategories = useCallback(
     (filtCat) => {
       const filteredCategories = filtCat
         .map((category) => {
-          const subMenusWithPlayers = category.subMenu.filter((subMenu) =>
-            players.some((player) =>
+          const subMenusWithPlayers = category.subMenu.filter((subMenu) => {
+            // Kontrollera om subMenu innehåller ett årtal (fyra siffror)
+            const yearMatch = subMenu.match(/\d{4}/); // Regex för att hitta fyra siffror (årtal)
+
+            if (yearMatch) {
+              const year = parseInt(yearMatch[0], 10); // Hämta det första matchande året
+              // Kolla om någon spelare har ett årtal som matchar eller ligger i närheten (decennium)
+              const matches = players.some((player) =>
+                player.category.some((cat) => {
+                  const playerYear = parseInt(cat.sub, 10); // Omvandla spelarens årtal till heltal
+                  const isInDecade =
+                    Math.floor(playerYear / 10) * 10 ===
+                    Math.floor(year / 10) * 10;
+
+                  return cat.main === category.mainMenu && isInDecade;
+                })
+              );
+
+              return matches; // Om någon spelare matchar
+            }
+
+            // Om det inte finns ett årtal, kontrollera om det finns exakt matchning
+            const exactMatch = players.some((player) =>
               player.category.some(
-                (cat) => cat.main === category.mainMenu && cat.sub === subMenu
+                (cat) => cat.main === category.mainMenu && cat.sub === subMenu // Vi jämför direkt mot subMenu här
               )
-            )
-          );
+            );
 
-          return {
-            ...category,
-            subMenu: subMenusWithPlayers,
-          };
+            return exactMatch; // Returnera om det finns en exakt matchning
+          });
+
+          // Om det finns några subMenu med matchande spelare, returnera den filtrerade kategorin
+          if (subMenusWithPlayers.length > 0) {
+            return {
+              ...category,
+              subMenu: subMenusWithPlayers,
+            };
+          }
+
+          // Om inga subMenu har matchande spelare, returnera null
+          return null;
         })
-        .filter((category) => category.subMenu.length > 0);
+        .filter((category) => category !== null); // Ta bort kategorier utan matchande subMenu
 
-      return filteredCategories;
+      // Sortera kategorier och subMenu för att säkerställa ordning
+      const sortedCategories = [...filteredCategories]
+        .map((category) => ({
+          ...category,
+          subMenu: category.subMenu.sort((a, b) => a.localeCompare(b)),
+        }))
+        .sort((a, b) => a.mainMenu.localeCompare(b.mainMenu));
+
+      return sortedCategories;
     },
     [players]
   );
 
   useEffect(() => {
-    setMenu(isAuthenticated ? categories : filterCategories(categories));
-  }, [categories, filterCategories, isAuthenticated, players]);
+    if (isAuthenticated) {
+      const sortedCategories = [...categories]
+        .map((category) => ({
+          ...category,
+          subMenu: [...category.subMenu].sort((a, b) => {
+            // Om både a och b är nummer, sortera som nummer
+            const numA = parseInt(a, 10);
+            const numB = parseInt(b, 10);
+            if (!isNaN(numA) && !isNaN(numB)) {
+              return numA - numB;
+            }
+            // Annars sortera som text
+            return a.localeCompare(b);
+          }),
+        }))
+        .sort((a, b) => a.mainMenu.localeCompare(b.mainMenu));
 
-  const handleDrawerOpen = useCallback(() => {
-    setIsDrawerOpen(true);
-  }, []);
+      setMenu(sortedCategories);
+    } else {
+      setMenu(filterCategories(categories));
+    }
+  }, [categories, filterCategories, isAuthenticated]);
 
-  const handleDrawerClose = useCallback(() => {
-    setIsDrawerOpen(false);
-  }, []);
+  const handleDrawerOpen = () => setIsDrawerOpen(true);
+  const handleDrawerClose = () => setIsDrawerOpen(false);
 
-  const handleOpenDialog = useCallback((content) => {
+  const handleOpenDialog = (content) => {
     setDialogContent(content);
     setOpenDialog(true);
-  }, []);
+  };
 
-  const handleCloseDialog = useCallback(() => {
-    setOpenDialog(false);
-  }, []);
+  const handleCloseDialog = () => setOpenDialog(false);
 
-  const handleAddCategoryClick = useCallback(() => {
+  const handleAddCategoryClick = () => {
     handleOpenDialog(<AddCategory handleCloseDialog={handleCloseDialog} />);
-  }, [handleOpenDialog, handleCloseDialog]);
-
-  const handleAddSubCategoryClick = useCallback(
-    (mainMenu) => {
-      handleOpenDialog(
-        <AddSubCategory
-          mainCategory={mainMenu}
-          handleCloseDialog={handleCloseDialog}
-        />
-      );
-    },
-    [handleOpenDialog, handleCloseDialog]
-  );
-
-  /**
-   * Returns a click handler for adding sub categories.
-   *
-   * @param {string} mainMenu - The main category name.
-   * @returns {function} The click handler function.
-   */
-  const createAddSubCategoryClickHandler = (mainMenu) => {
-    return () => handleAddSubCategoryClick(mainMenu);
   };
 
-  const handleDeleteCategoryClick = useCallback(
-    (mainMenu, _id) => {
-      handleOpenDialog(
-        <DeleteCategory
-          category={mainMenu}
-          id={_id}
-          handleCloseDialog={handleCloseDialog}
-        />
-      );
-    },
-    [handleOpenDialog, handleCloseDialog]
-  );
-
-  /**
-   * Returns a click handler for deleting a specific category.
-   *
-   * @param {string} mainMenu - The main category name.
-   * @param {string} _id - The id of the category.
-   * @returns {function} The click handler function.
-   */
-  const createDeleteCategoryClickHandler = (mainMenu, _id) => {
-    return () => handleDeleteCategoryClick(mainMenu, _id);
+  const handleAddSubCategoryClick = (mainMenu) => {
+    handleOpenDialog(
+      <AddSubCategory
+        mainCategory={mainMenu}
+        handleCloseDialog={handleCloseDialog}
+      />
+    );
   };
 
-  const handleDeleteSubCategoryClick = useCallback(
-    (mainMenu, subItem) => {
-      handleOpenDialog(
-        <DeleteSubCategory
-          mainCategory={mainMenu}
-          subCategory={subItem}
-          handleCloseDialog={handleCloseDialog}
-        />
-      );
-    },
-    [handleOpenDialog, handleCloseDialog]
-  );
-
-  /**
-   * Returns a click handler for deleting a specific subcategory.
-   *
-   * @param {string} mainMenu - The main category name.
-   * @param {string} subItem - The subcategory name to delete.
-   * @returns {function} The click handler function.
-   */
-  const createDeleteSubCategoryClickHandler = (mainMenu, subItem) => {
-    return () => handleDeleteSubCategoryClick(mainMenu, subItem);
+  const handleDeleteCategoryClick = (mainMenu, _id) => {
+    handleOpenDialog(
+      <DeleteCategory
+        category={mainMenu}
+        id={_id}
+        handleCloseDialog={handleCloseDialog}
+      />
+    );
   };
 
-  const listPlayer = useCallback(
-    (e, mainMenu, sub) => {
-      e.preventDefault();
-      const joinCategories = [mainMenu, sub];
-      console.log("navigate in DrawerMenu");
-      navigate(`/players/listPlayers?key=${joinCategories.join(",")}&page=1`, {
-        redirect: true,
-      });
-      handleDrawerClose();
-    },
-    [handleDrawerClose, navigate]
-  );
+  const handleDeleteSubCategoryClick = (mainMenu, subItem) => {
+    handleOpenDialog(
+      <DeleteSubCategory
+        mainCategory={mainMenu}
+        subCategory={subItem}
+        handleCloseDialog={handleCloseDialog}
+      />
+    );
+  };
 
-  /**
-   * Returns a click handler for opening a list of players.
-   *
-   * @param {string} mainMenu - The main category name.
-   * @param {string} subItem - The subcategory name.
-   * @returns {function} The click handler function.
-   */
-  const createListPlayerHandler = useCallback(
-    (mainMenu, subItem) => (e) => {
-      listPlayer(e, mainMenu, subItem);
-    },
-    [listPlayer]
-  );
+  const listPlayer = (e, mainMenu, sub) => {
+    e.preventDefault();
+    navigate(`/players/listPlayers?key=${[mainMenu, sub].join(",")}&page=1`, {
+      replace: true,
+    });
+    handleDrawerClose();
+  };
 
   return (
     <div>
-      <IconButton
-        edge="start"
-        color="inherit"
-        aria-label="menu"
-        onClick={handleDrawerOpen}
-      >
+      <IconButton edge="start" color="inherit" onClick={handleDrawerOpen}>
         <MenuIcon />
       </IconButton>
       <Drawer anchor="top" open={isDrawerOpen} onClose={handleDrawerClose}>
-        <IconButton
-          className={classes.closeMenuButton}
-          onClick={handleDrawerClose}
-        >
+        <IconButton onClick={handleDrawerClose} className={CloseMenuButton}>
           <CloseIcon />
         </IconButton>
         {isAuthenticated && (
-          <ListItem className={classes.addCategoryButton}>
-            <Button
+          <ListItem className={AddCategoryButton}>
+            <StyledButton
               variant="outlined"
               size="small"
               color="primary"
               onClick={handleAddCategoryClick}
             >
               Add new category
-            </Button>
+            </StyledButton>
           </ListItem>
         )}
-        <div className={classes.mainMenuContainer}>
-          {menu.map((category) => {
-            const { _id, mainMenu, subMenu } = category;
-
-            if (!_id || !mainMenu || !subMenu) {
-              return null;
-            }
-
-            return (
-              <div key={_id}>
-                <ListItem className={classes.mainMenuItem}>
-                  <ListItemText primary={mainMenu} />
-                  {isAuthenticated && (
-                    <div>
+        <MainMenuContainer>
+          {menu.map(({ _id, mainMenu, subMenu }) => (
+            <div key={_id}>
+              <MainMenuItem>
+                <ListItemText primary={mainMenu} />
+                {isAuthenticated && (
+                  <div>
+                    <IconButton
+                      onClick={() => handleAddSubCategoryClick(mainMenu)}
+                    >
+                      <AddIcon />
+                    </IconButton>
+                    <IconButton
+                      onClick={() => handleDeleteCategoryClick(mainMenu, _id)}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  </div>
+                )}
+              </MainMenuItem>
+              <List disablePadding>
+                {subMenu.map((subItem, index) => (
+                  <ListItem
+                    key={`${subItem || ""}-${index}`}
+                    button
+                    onClick={(e) => listPlayer(e, mainMenu, subItem)}
+                    className={SubMenuItem}
+                  >
+                    <ListItemText primary={subItem || ""} />
+                    {isAuthenticated && (
                       <IconButton
-                        className={classes.iconButton}
-                        onClick={createAddSubCategoryClickHandler(mainMenu)}
-                      >
-                        <AddIcon />
-                      </IconButton>
-                      <IconButton
-                        className={classes.iconButton}
-                        onClick={createDeleteCategoryClickHandler(
-                          mainMenu,
-                          _id
-                        )}
+                        onClick={() =>
+                          handleDeleteSubCategoryClick(mainMenu, subItem)
+                        }
                       >
                         <DeleteIcon />
                       </IconButton>
-                    </div>
-                  )}
-                </ListItem>
-                <List component="div" disablePadding>
-                  {subMenu.map((subItem, index) => {
-                    const subItemId = subItem ? subItem._id : "";
-                    const subItemText = subItem || "";
-
-                    return (
-                      <ListItem
-                        key={`${subItemId}-${index}`}
-                        button
-                        onClick={createListPlayerHandler(mainMenu, subItem)}
-                        className={classes.subMenuItem}
-                      >
-                        <ListItemText primary={subItemText} />
-                        {isAuthenticated && (
-                          <div>
-                            <IconButton
-                              className={classes.iconButton}
-                              onClick={createDeleteSubCategoryClickHandler(
-                                mainMenu,
-                                subItem
-                              )}
-                            >
-                              <DeleteIcon />
-                            </IconButton>
-                          </div>
-                        )}
-                      </ListItem>
-                    );
-                  })}
-                </List>
-              </div>
-            );
-          })}
-        </div>
+                    )}
+                  </ListItem>
+                ))}
+              </List>
+            </div>
+          ))}
+        </MainMenuContainer>
       </Drawer>
       <ScrollDialog open={openDialog} onClose={handleCloseDialog}>
         {dialogContent}

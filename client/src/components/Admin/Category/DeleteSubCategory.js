@@ -1,7 +1,7 @@
 //DeleteSubCategory.js
 import React, { useCallback } from "react";
 import { useDispatch } from "react-redux";
-import Button from "@material-ui/core/Button";
+import Button from "@mui/material/Button";
 import { deleteSubCategory } from "../../../actions/menu";
 
 /**
@@ -20,12 +20,7 @@ function DeleteSubCategory({ mainCategory, subCategory, handleCloseDialog }) {
   const handleDeleteCategory = useCallback(
     (e) => {
       e.preventDefault();
-      console.log("main: ", mainCategory, " sub ", subCategory);
-      const delSubCategory = {
-        categoryId: mainCategory,
-        subCategoryName: subCategory,
-      };
-      dispatch(deleteSubCategory(delSubCategory));
+      dispatch(deleteSubCategory(mainCategory, subCategory));
       handleCloseDialog();
     },
     [dispatch, handleCloseDialog, mainCategory, subCategory]
@@ -33,7 +28,7 @@ function DeleteSubCategory({ mainCategory, subCategory, handleCloseDialog }) {
 
   return (
     <div>
-      <h3>Delete category</h3>
+      <h3>Delete sub category</h3>
       <p>
         Are you sure you want to delete the sub category &quot;{subCategory}
         &quot;?

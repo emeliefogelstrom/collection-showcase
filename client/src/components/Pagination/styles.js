@@ -1,8 +1,8 @@
-//styles.js for Pagination.js
-import { makeStyles } from "@material-ui/core/styles";
+// src/components/Pagination/styles.js
+import { styled } from "@mui/material/styles";
 
-export default makeStyles(() => ({
-  ul: {
-    justifyContent: "space-around",
-  },
+// Stil för ul i Pagination
+export const PaginationContainer = styled("ul")(({ theme }) => ({
+  display: "flex",
+  justifyContent: "space-around",
 }));

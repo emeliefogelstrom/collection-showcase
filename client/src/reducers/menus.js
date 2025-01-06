@@ -1,8 +1,10 @@
 import {
   FETCH_MENU,
   CREATE_MENU,
+  ADD_SUBMENU,
   FETCH_CATEGORIES,
   DELETE_CATEGORY,
+  DELETE_SUBCATEGORY,
 } from "../constants/actionTypes";
 
 /**
@@ -19,9 +21,17 @@ const menusReducer = (menus = [], action) => {
     case FETCH_MENU:
       return action.payload;
 
-    // Adds a new menu to the current state
     case CREATE_MENU:
-      return [...menus, action.payload];
+      return action.payload; // Lägg till hela nya mainMenu
+
+    // Adds a sub menu to the current state
+    case ADD_SUBMENU:
+      const updatedSubMenu = menus.map((menu) =>
+        menu.mainMenu === action.payload.mainMenu
+          ? { ...menu, subMenu: action.payload.subMenu } // Ersätt subMenu för rätt mainMenu
+          : menu
+      );
+      return updatedSubMenu;
 
     // Updates the state with fetched categories
     case FETCH_CATEGORIES:
@@ -29,7 +39,10 @@ const menusReducer = (menus = [], action) => {
 
     // Removes a category from the state based on the action payload (category ID)
     case DELETE_CATEGORY:
-      return menus.filter((menu) => menu._id !== action.payload);
+      return action.payload;
+
+    case DELETE_SUBCATEGORY:
+      return action.payload;
 
     // Default case returns the current state if action type doesn't match
     default:

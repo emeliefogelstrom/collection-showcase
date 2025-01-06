@@ -2,8 +2,10 @@ import * as api from "../api";
 import {
   FETCH_MENU,
   CREATE_MENU,
+  ADD_SUBMENU,
   FETCH_CATEGORIES,
   DELETE_CATEGORY,
+  DELETE_SUBCATEGORY,
 } from "../constants/actionTypes";
 
 /**
@@ -66,7 +68,7 @@ export const addCategory = (category) => async (dispatch) => {
 export const addSubCategory = (category) => async (dispatch) => {
   try {
     const { data } = await api.addSubCategory(category);
-    dispatch({ type: CREATE_MENU, payload: data });
+    dispatch({ type: ADD_SUBMENU, payload: data });
   } catch (error) {
     console.log(error.message);
   }
@@ -82,8 +84,8 @@ export const addSubCategory = (category) => async (dispatch) => {
  */
 export const deleteCategory = (id) => async (dispatch) => {
   try {
-    await api.deleteCategory(id);
-    dispatch({ type: DELETE_CATEGORY, payload: id });
+    const response = await api.deleteCategory(id);
+    dispatch({ type: DELETE_CATEGORY, payload: response.data });
   } catch (error) {
     console.log(error.message);
   }
@@ -97,11 +99,12 @@ export const deleteCategory = (id) => async (dispatch) => {
  * @param {Object} category - The subcategory to be deleted.
  * @returns {function} A dispatch function to trigger a Redux action.
  */
-export const deleteSubCategory = (category) => async (dispatch) => {
-  try {
-    const { data } = await api.deleteSubCategory(category);
-    dispatch({ type: DELETE_CATEGORY, payload: data });
-  } catch (error) {
-    console.log(error.message);
-  }
-};
+export const deleteSubCategory =
+  (categoryId, subCategoryName) => async (dispatch) => {
+    try {
+      const response = await api.deleteSubCategory(categoryId, subCategoryName);
+      dispatch({ type: DELETE_SUBCATEGORY, payload: response.data }); // Uppdatera hela menyn
+    } catch (error) {
+      console.log(error.message);
+    }
+  };

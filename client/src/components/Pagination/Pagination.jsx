@@ -1,11 +1,10 @@
-//Pagination.js
 import React, { useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { Pagination, PaginationItem } from "@material-ui/lab";
+import Pagination from "@mui/material/Pagination";
+import PaginationItem from "@mui/material/PaginationItem";
 
 import { getPlayers, getPlayersBySearch } from "../../actions/players";
-import useStyles from "./styles";
 
 /**
  * Paginate component provides pagination controls for navigating through
@@ -17,7 +16,6 @@ import useStyles from "./styles";
  * @returns {JSX.Element} The rendered Paginate component.
  */
 const Paginate = ({ page, searchParams }) => {
-  const classes = useStyles();
   const dispatch = useDispatch();
   const { numberOfPages } = useSelector((state) => state.players);
   const searchQuery = searchParams.get("searchQuery");
@@ -27,11 +25,9 @@ const Paginate = ({ page, searchParams }) => {
     if (page) {
       if (searchQuery) {
         const [searchString] = searchQuery.split("?");
-        console.log("searchQuery searchTerm: ", searchString, " page: ", page);
         dispatch(getPlayersBySearch(searchString, page));
       } else if (key) {
         const [categories] = key.split("?");
-        console.log("searchParams: ", categories);
         dispatch(getPlayers(categories, page));
       }
     }
@@ -54,12 +50,13 @@ const Paginate = ({ page, searchParams }) => {
 
   return (
     <Pagination
-      classes={{ ul: classes.ul }}
       count={numberOfPages}
       page={Number(page) || 1}
       variant="outlined"
       color="primary"
       renderItem={renderPaginationItem}
+      // Använd PaginationContainer för att styla ul
+      sx={{ "& ul": { justifyContent: "space-around" } }} // Alternativ till styling i classes
     />
   );
 };

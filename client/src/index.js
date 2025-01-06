@@ -1,20 +1,19 @@
-// index.js
 import React, { Suspense } from "react";
-import ReactDOM from "react-dom";
+import ReactDOM from "react-dom/client";
 import App from "./App";
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
 import HttpApi from "i18next-http-backend";
-import { BrowserRouter } from "react-router-dom";
+import { BrowserRouter } from "react-router-dom"; // Det här är din Router-komponent
 import { Provider } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
-import thunk from "redux-thunk";
+import { thunk } from "redux-thunk";
 
 import { reducers } from "./reducers";
 
 i18n
-  .use(initReactI18next) // passes i18n down to react-i18next
+  .use(initReactI18next)
   .use(LanguageDetector)
   .use(HttpApi)
   .init({
@@ -40,17 +39,16 @@ const store = configureStore({
   middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(thunk),
 });
 
-ReactDOM.render(
+// Byt ut ReactDOM.render med createRoot
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(
   <Suspense fallback={loadingMarkup}>
     <Provider store={store}>
       <BrowserRouter>
+        {" "}
+        {/* Denna komponent måste omsluta hela applikationen */}
         <App />
       </BrowserRouter>
     </Provider>
-  </Suspense>,
-  document.getElementById("root")
+  </Suspense>
 );
-
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals

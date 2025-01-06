@@ -1,7 +1,17 @@
-// LogoutButton.js
 import React from "react";
-import Button from "@material-ui/core/Button";
-import useStyles from "../styles";
+import Button from "@mui/material/Button";
+import { styled } from "@mui/material/styles"; // Importera styled från MUI
+
+// Stilad komponent för knappen
+const LogoutButtonStyled = styled(Button)(({ theme }) => ({
+  color: theme.palette.primary.contrastText, // Huvudfärg för texten
+  backgroundColor: theme.palette.primary.light, // Bakgrundsfärg
+  border: "1px solid", // Gräns för knappen
+  borderColor: theme.palette.text.primary, // Gränsfärgen matchar texten
+  "&:hover": {
+    backgroundColor: theme.palette.action.hover, // Hover effekt
+  },
+}));
 
 /**
  * LogoutButton component renders a button that triggers the logout functionality when clicked.
@@ -10,16 +20,7 @@ import useStyles from "../styles";
  * @returns {JSX.Element} The rendered LogoutButton component.
  */
 const LogoutButton = ({ handleLogout }) => {
-  const classes = useStyles();
-  return (
-    <Button
-      onClick={handleLogout}
-      className={classes.logoutButton}
-      color="inherit"
-    >
-      Logout
-    </Button>
-  );
+  return <LogoutButtonStyled onClick={handleLogout}>Logout</LogoutButtonStyled>;
 };
 
 export default LogoutButton;

@@ -1,19 +1,14 @@
-//Player.js
 import React, { useCallback, useState } from "react";
 import {
-  Card,
-  CardActions,
-  CardMedia,
   Button,
-  Typography,
   ButtonBase,
   Dialog,
   DialogTitle,
   DialogContent,
   DialogActions,
-} from "@material-ui/core/";
-import DeleteIcon from "@material-ui/icons/Delete";
-import UpdateIcon from "@material-ui/icons/Update";
+} from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
+import UpdateIcon from "@mui/icons-material/Update";
 import ScrollDialog from "../../dialog";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -21,7 +16,16 @@ import { deletePlayer, updatePlayer } from "../../../actions/players";
 import PlayerForm from "../../Admin/Player/PlayerForm";
 import { useAuth } from "../../Auth/AuthContext";
 
-import useStyles from "./styles";
+// Importera de nya stylade komponenterna
+import {
+  Card,
+  CardActions as StyledCardActions,
+  TextActions,
+  Name,
+  Club,
+  Year,
+  StyledCardMedia,
+} from "./styles";
 
 /**
  * Player component displays the details of a single player,
@@ -35,7 +39,6 @@ import useStyles from "./styles";
 const Player = ({ player }) => {
   const dispatch = useDispatch();
   const history = useNavigate();
-  const classes = useStyles();
   const { isAuthenticated } = useAuth();
 
   const [openDialog, setOpenDialog] = useState(false);
@@ -86,31 +89,24 @@ const Player = ({ player }) => {
   );
 
   return (
-    <Card className={classes.card} raised elevation={6}>
+    <Card raised elevation={6}>
       <ButtonBase
         component="span"
-        className={classes.cardAction}
         onClick={openPlayer}
+        sx={{
+          display: "block",
+          width: "100%",
+          textAlign: "inherit",
+        }}
       >
-        <CardMedia
-          className={classes.media}
-          image={player.images[0]}
-          title={player.name}
-        />
-
-        <div className={classes.overlay}>
-          <Typography variant="h6">{player.club}</Typography>
-        </div>
-        <Typography
-          className={classes.name}
-          gutterBottom
-          variant="h5"
-          component="h2"
-        >
-          {player.name}
-        </Typography>
+        <StyledCardMedia src={player.images[0]} alt={player.name} />
+        <TextActions>
+          <Club variant="h6">{player.club}</Club>
+          <Year variant="h6">{player.category[0].sub}</Year>
+        </TextActions>
+        <Name>{player.name}</Name>
       </ButtonBase>
-      <CardActions className={classes.cardActions}>
+      <StyledCardActions>
         <ScrollDialog
           title="Update Player"
           open={openUpdatePlayer}
@@ -136,7 +132,7 @@ const Player = ({ player }) => {
             </Button>
           </>
         )}
-      </CardActions>
+      </StyledCardActions>
 
       <Dialog open={openDialog} onClose={handleCloseDialog}>
         <DialogTitle>Confirm Delete</DialogTitle>
