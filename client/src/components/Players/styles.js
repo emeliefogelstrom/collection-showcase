@@ -4,6 +4,7 @@ import { styled } from "@mui/system"; // Importera styled från MUI
 export const Root = styled("div")({
   marginTop: "2rem",
   marginBottom: "2rem",
+  overflowX: "hidden",
 });
 
 export const AppBar = styled("div")(({ theme }) => ({

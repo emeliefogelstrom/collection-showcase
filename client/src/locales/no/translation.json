@@ -1,3 +1,4 @@
 {
-  "welcome_message": "Velkommen til vår nettside!"
+  "welcome_message": "Velkommen til vår nettside!",
+  "search_no_result": "Søket ditt etter <strong>{{query}}</strong> ga ingen resultater."
 }
