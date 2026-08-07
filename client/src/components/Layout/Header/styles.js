@@ -15,7 +15,7 @@ export const Root = styled("div")(({ theme }) => ({
 
 // AppBar-styling med dynamisk bakgrundsfärg
 export const AppBarStyled = styled(AppBar)(({ location }) => ({
-  backgroundColor: location.pathname === "/" ? "transparent" : "black",
+  backgroundColor: location.pathname === "/" ? "transparent" : "#475569",
   transition: "background-color 0.3s ease",
 }));
 
@@ -35,11 +35,15 @@ export const DialogContentStyled = styled(DialogContent)(({ theme }) => ({
 }));
 
 // Wrapper för SearchBar och LanguageToggle
-export const SearchLanguageWrapper = styled("div")({
+export const SearchLanguageWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   alignItems: "center",
-  gap: "16px", // Space between SearchBar and LanguageToggle
-});
+  gap: "16px",
+  paddingRight: "50px", // default för desktop
+  [theme.breakpoints.down("sm")]: {
+    paddingRight: 0, // tar bort på små skärmar
+  },
+}));
 
 export const MobileSearchIconStyled = styled(SearchIcon)`
   color: #ffffff; /* Vit färg */
@@ -58,8 +62,7 @@ export const MobileSearchIconWrapper = styled("div")(({ theme }) => ({
 // Dialog för mobil sökning
 export const DialogStyled = styled(Dialog)(({ theme }) => ({
   "& .MuiPaper-root": {
-    padding: theme.spacing(2),
-    borderRadius: "8px",
+    background: "transparent",
   },
 }));
 
