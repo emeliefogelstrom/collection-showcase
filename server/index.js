@@ -9,6 +9,8 @@ import cookieParser from "cookie-parser";
 import menus from "./routes/menus.js";
 import players from "./routes/players.js";
 import users from "./routes/users.js";
+import path from "path";
+import { fileURLToPath } from "url";
 
 // Setup environment
 dotenv.config();
@@ -56,6 +58,11 @@ app.get("/", (req, res) => {
 app.use("/api/menus", menus);
 app.use("/api/players", players);
 app.use("/api/users", users);
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // Run app
 const PORT = process.env.PORT || 4000; // Set default port to 4000

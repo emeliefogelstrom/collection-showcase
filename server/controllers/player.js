@@ -2,7 +2,7 @@
 import mongoose from "mongoose";
 import Player from "../models/Player.js";
 import Jimp from "jimp";
-import { uploadToS3, deleteFromS3 } from "../services/s3service.js";
+import { uploadToS3, deleteFromS3 } from "../services/imageService.js";
 
 /**
  * Retrieves all players from the database.
@@ -307,19 +307,19 @@ export const updatePlayer = async (req, res) => {
 
     const compressedImages = req.files
       ? await Promise.all(
-          req.files.map(async (file) => {
-            const image = await Jimp.read(file.buffer);
-            await image.resize(800, Jimp.AUTO).quality(80);
-            const buffer = await image.getBufferAsync(Jimp.MIME_JPEG);
+        req.files.map(async (file) => {
+          const image = await Jimp.read(file.buffer);
+          await image.resize(800, Jimp.AUTO).quality(80);
+          const buffer = await image.getBufferAsync(Jimp.MIME_JPEG);
 
-            const { Location } = await uploadToS3({
-              buffer,
-              originalname: file.originalname,
-              mimetype: Jimp.MIME_JPEG,
-            });
-            return Location;
-          })
-        )
+          const { Location } = await uploadToS3({
+            buffer,
+            originalname: file.originalname,
+            mimetype: Jimp.MIME_JPEG,
+          });
+          return Location;
+        })
+      )
       : [];
 
     let categoriesToSplit = JSON.parse(categories);
