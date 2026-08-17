@@ -34,7 +34,7 @@ app.use(cookieParser());
 // CORS configuration
 app.use(
   cors({
-    origin: "*",
+    origin: process.env.CLIENT_URL || "http://localhost:3000",
     methods: "GET,HEAD,PUT,POST,DELETE",
     allowedHeaders: "Content-Type, Authorization",
   })
