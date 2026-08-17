@@ -74,37 +74,3 @@ export const signout = async (req, res) => {
   res.status(200).json({ message: "Logout successful" });
 };
 
-/**
- * Handles user sign-up.
- *
- * @param {object} req - The request object containing username and password in the body.
- * @param {object} res - The response object for sending responses.
- */
-export const signup = async (req, res) => {
-  const { username, password } = req.body;
-
-  try {
-    const existingUser = await User.findOne({ userName: username });
-    // Check if user already exists
-    if (existingUser) return res.status(400).json("User already exists");
-
-    // Hash the password
-    var hashPassword = bcrypt.hashSync(password, 12);
-    const result = await User.create({
-      userName: username,
-      password: hashPassword,
-    });
-
-    // Generate token
-    const token = jwt.sign(
-      { userName: result.username, id: result._id },
-      process.env.JWT,
-      { expiresIn: "1h" }
-    );
-
-    return res.status(200).json({ result, token });
-  } catch (error) {
-    console.error("Error during registration:", error);
-    return res.status(500).json("Something went wrong");
-  }
-};
