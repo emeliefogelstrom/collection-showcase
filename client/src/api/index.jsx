@@ -22,7 +22,6 @@ API.interceptors.request.use(
 export const validateToken = () => API.get("/users/validateToken");
 export const signIn = (formData) => API.post("/users/signin", formData);
 export const signOut = () => API.post("/users/signout");
-export const signUp = (formData) => API.post("/users/signup", formData);
 
 // Menu and Category API calls
 export const getCategory = () => API.get("/menus/getCategory");
