@@ -242,6 +242,7 @@ function AddUpdatePlayerForm({
 
       const updatedPlayerData = {
         ...playerData,
+         _id: player?._id,
         category: mergedCategories,
         images: existingImages.concat(imageFiles),
       };

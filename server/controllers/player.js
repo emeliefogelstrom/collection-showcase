@@ -1,7 +1,7 @@
 // controllers/player.js
 import mongoose from "mongoose";
 import Player from "../models/Player.js";
-import Jimp from "jimp";
+import { Jimp } from "jimp";
 import { uploadToS3, deleteFromS3 } from "../services/imageService.js";
 
 /**
@@ -189,8 +189,8 @@ export const addPlayer = async (req, res) => {
           throw new Error(`Invalid file type: ${file.mimetype}`);
         }
         const image = await Jimp.read(file.buffer);
-        await image.resize(800, Jimp.AUTO).quality(80);
-        const buffer = await image.getBufferAsync(Jimp.MIME_JPEG);
+        image.resize({ w: 800 });
+        const buffer = await image.getBuffer("image/jpeg", { quality: 80 });
 
         try {
           const result = await uploadToS3({
@@ -259,7 +259,7 @@ export const deletePlayer = async (req, res) => {
       })
     );
 
-    await Player.findByIdAndRemove(id);
+    await Player.findByIdAndDelete(id);
     res.json({ message: "Player deleted" });
   } catch (error) {
     res.status(500).json({ message: "Something went wrong" });
@@ -309,13 +309,13 @@ export const updatePlayer = async (req, res) => {
       ? await Promise.all(
         req.files.map(async (file) => {
           const image = await Jimp.read(file.buffer);
-          await image.resize(800, Jimp.AUTO).quality(80);
-          const buffer = await image.getBufferAsync(Jimp.MIME_JPEG);
+          image.resize({ w: 800 });
+          const buffer = await image.getBuffer("image/jpeg", { quality: 80 });
 
           const { Location } = await uploadToS3({
             buffer,
             originalname: file.originalname,
-            mimetype: Jimp.MIME_JPEG,
+            mimetype: "image/jpeg",
           });
           return Location;
         })
@@ -349,7 +349,7 @@ export const updatePlayer = async (req, res) => {
         infoNorwegian,
         images: [...compressedImages, ...playerImages],
       },
-      { new: true }
+      { returnDocument: "after" }
     );
 
     res.json(updatedPlayer);
