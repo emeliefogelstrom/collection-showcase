@@ -63,18 +63,19 @@ export function ExpandableCardDemo({ cards }) {
     setOpenUpdateDialog(false);
   }, []);
 
-  const handleOpenDeleteDialog = useCallback(() => {
-    setOpenDeleteDialog(true);
-  }, []);
+  const handleOpenDeleteDialog = useCallback((playerCard) => {
+  setSelectedCard(playerCard);
+  setOpenDeleteDialog(true);
+}, []);
 
   const handleCloseDeleteDialog = useCallback(() => {
     setOpenDeleteDialog(false);
   }, []);
 
   const handleDeletePlayer = useCallback(() => {
-    dispatch(deletePlayer(cards._id));
-    setOpenDeleteDialog(false);
-  }, [dispatch, cards._id]);
+  dispatch(deletePlayer(selectedCard._id));
+  setOpenDeleteDialog(false);
+}, [dispatch, selectedCard]);
 
   const handleSubmit = useCallback(
     (updatedPlayerData) => {
@@ -90,7 +91,7 @@ export function ExpandableCardDemo({ cards }) {
         data.append("images", image);
       });
 
-      dispatch(updatePlayer(cards._id, data));
+      dispatch(updatePlayer(updatedPlayerData._id, data));
     },
     [dispatch, cards._id]
   );
@@ -226,7 +227,7 @@ export function ExpandableCardDemo({ cards }) {
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        handleOpenDeleteDialog();
+                        handleOpenDeleteDialog(card);
                       }}
                       className="flex items-center gap-1 px-3 py-1 text-sm rounded-lg bg-slate-600 text-white hover:bg-slate-700 transition"
                     >

@@ -71,11 +71,7 @@ const dbURL = process.env.MONGODB_URL;
 
 // Connect to mongo database
 mongoose
-  .connect(dbURL, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    useCreateIndex: true,
-  })
+  .connect(dbURL)
   .then(() => {
     app.listen(PORT, () => {
       console.log(`Server running on port: ${PORT}`);
@@ -95,5 +91,3 @@ process.on("unhandledRejection", (err) => {
   console.error("Unhandled Rejection:", err.message);
   process.exit(1); // Exit with failure code
 });
-
-mongoose.set("useFindAndModify", false);
