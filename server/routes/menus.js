@@ -1,4 +1,3 @@
-// routes/menus.js
 import express from "express";
 import {
   addCategory,
@@ -8,12 +7,14 @@ import {
   getCategory,
   getMenuCategory,
 } from "../controllers/menu.js";
+import auth from "../middleware/auth.js";
+
 const router = express.Router();
 
-router.post("/addCategory", addCategory);
-router.post("/addSubCategory", addSubCategory);
-router.delete("/deleteCategory/:id", deleteCategory);
-router.delete("/deleteSubCategory", deleteSubCategory);
+router.post("/addCategory", auth, addCategory);
+router.post("/addSubCategory", auth, addSubCategory);
+router.delete("/deleteCategory/:id", auth, deleteCategory);
+router.delete("/deleteSubCategory", auth, deleteSubCategory);
 router.get("/getCategory", getCategory);
 router.get("/getMenuCategory", getMenuCategory);
 
