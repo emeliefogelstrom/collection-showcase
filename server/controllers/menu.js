@@ -40,25 +40,20 @@ export const addCategory = (req, res) => {
  */
 export const addSubCategory = async (req, res) => {
   try {
-    Menu.findOneAndUpdate(
+    const menu = await Menu.findOneAndUpdate(
       { mainMenu: req.body.category },
       { $addToSet: { subMenu: req.body.newSubCategory } },
-      { new: true, useFindAndModify: false },
-      function (err, menu) {
-        if (err) {
-          console.log(err);
-          return res.status(500).send({ message: "Error updating menu" });
-        }
-        if (!menu) {
-          return res.status(404).send({ message: "Menu not found" });
-        }
-        // Skicka tillbaka det uppdaterade menyn
-        return res.status(200).send(menu);
-      }
+      { new: true }
     );
+
+    if (!menu) {
+      return res.status(404).send({ message: "Menu not found" });
+    }
+
+    return res.status(200).send(menu);
   } catch (err) {
-    console.log("Error: " + err);
-    return res.status(500).send({ message: "Internal server error" });
+    console.error("Error: ", err);
+    return res.status(500).send({ message: "Error updating menu" });
   }
 };
 
@@ -70,13 +65,12 @@ export const addSubCategory = async (req, res) => {
  */
 export const deleteCategory = async (req, res) => {
   const { id } = req.params;
-  console.log("id: ", id);
   try {
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(404).send("No category with that id");
     }
 
-    const deletedCategory = await Menu.findByIdAndRemove(id);
+    const deletedCategory = await Menu.findByIdAndDelete(id);
 
     if (!deletedCategory) {
       return res.status(404).send("Category not found");
@@ -114,7 +108,6 @@ export const deleteSubCategory = async (req, res) => {
 
     // Hämta hela uppdaterade menyn
     const updatedMenu = await Menu.find();
-    console.log("menu: ", updatedMenu);
     res.json(updatedMenu); // Skicka tillbaka hela menyn, inte bara kategorin
   } catch (error) {
     console.error("Error:", error);
