@@ -33,7 +33,7 @@ const Players = () => {
     setFilterOption(event.target.value);
   }, []);
 
-  // Filtrera bort spelare utan giltig category/sub
+  // Filter out players without a valid category/sub
   const safePlayers = useMemo(() => {
     return filteredPlayers.filter(
       (p) =>
@@ -48,17 +48,17 @@ const Players = () => {
     const playersCopy = [...safePlayers];
 
     switch (filterOption) {
-      case 10: // Filtrera efter år
+      case 10: // Sort by year
         return playersCopy.sort((a, b) => {
           const yearA = a.category?.[0]?.sub ?? 0;
           const yearB = b.category?.[0]?.sub ?? 0;
           return yearA - yearB;
         });
-      case 20: // Filtrera efter namn
+      case 20: // Sort by name
         return playersCopy.sort((a, b) =>
           a.name.localeCompare(b.name, undefined, { sensitivity: "base" })
         );
-      case 30: // Filtrera efter klubb
+      case 30: // Sort by club
         return playersCopy.sort((a, b) =>
           a.club.localeCompare(b.club, undefined, { sensitivity: "base" })
         );
@@ -95,7 +95,7 @@ const Players = () => {
         </FormControl>
       </Grid>
 
-      {/* Rad för spelarkorten */}
+      {/* Player card row */}
       <Grid item container alignItems="stretch" spacing={{ xs: 0, sm: 3 }}>
         {isLoading ? (
           <CircularProgress className="mx-auto my-10" />
@@ -120,7 +120,7 @@ const Players = () => {
         )}
       </Grid>
 
-      {/* Paginations-komponenten */}
+      {/* Pagination component */}
       <Grid item xs={12} container justifyContent="center">
         <Grid item xs={8} sm={6} md={4}>
           <Paginate page={page} searchParams={query} />

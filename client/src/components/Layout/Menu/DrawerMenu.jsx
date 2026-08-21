@@ -38,15 +38,15 @@ const DrawerMenu = ({ categories, isAuthenticated }) => {
       const filteredCategories = filtCat
         .map((category) => {
           const subMenusWithPlayers = category.subMenu.filter((subMenu) => {
-            // Kontrollera om subMenu innehåller ett årtal (fyra siffror)
-            const yearMatch = subMenu.match(/\d{4}/); // Regex för att hitta fyra siffror (årtal)
+            // Check if subMenu contains a year (four digits)
+            const yearMatch = subMenu.match(/\d{4}/); // Regex to find four digits (year)
 
             if (yearMatch) {
-              const year = parseInt(yearMatch[0], 10); // Hämta det första matchande året
-              // Kolla om någon spelare har ett årtal som matchar eller ligger i närheten (decennium)
+              const year = parseInt(yearMatch[0], 10); // Get the first matching year
+              // Check if any player has a matching year or one in the same decade
               const matches = players.some((player) =>
                 player.category.some((cat) => {
-                  const playerYear = parseInt(cat.sub, 10); // Omvandla spelarens årtal till heltal
+                  const playerYear = parseInt(cat.sub, 10); // Convert the player's year to an integer
                   const isInDecade =
                     Math.floor(playerYear / 10) * 10 ===
                     Math.floor(year / 10) * 10;
@@ -55,20 +55,20 @@ const DrawerMenu = ({ categories, isAuthenticated }) => {
                 })
               );
 
-              return matches; // Om någon spelare matchar
+              return matches; // If any player matches
             }
 
-            // Om det inte finns ett årtal, kontrollera om det finns exakt matchning
+            // If there's no year, check for an exact match instead
             const exactMatch = players.some((player) =>
               player.category.some(
-                (cat) => cat.main === category.mainMenu && cat.sub === subMenu // Vi jämför direkt mot subMenu här
+                (cat) => cat.main === category.mainMenu && cat.sub === subMenu // We compare directly against subMenu here
               )
             );
 
-            return exactMatch; // Returnera om det finns en exakt matchning
+            return exactMatch; // Return whether there's an exact match
           });
 
-          // Om det finns några subMenu med matchande spelare, returnera den filtrerade kategorin
+          // If there are any subMenus with matching players, return the filtered category
           if (subMenusWithPlayers.length > 0) {
             return {
               ...category,
@@ -76,12 +76,12 @@ const DrawerMenu = ({ categories, isAuthenticated }) => {
             };
           }
 
-          // Om inga subMenu har matchande spelare, returnera null
+          // If no subMenus have matching players, return null
           return null;
         })
-        .filter((category) => category !== null); // Ta bort kategorier utan matchande subMenu
+        .filter((category) => category !== null); // Remove categories with no matching subMenu
 
-      // Sortera kategorier och subMenu för att säkerställa ordning
+      // Sort categories and subMenus to ensure consistent order
       const sortedCategories = [...filteredCategories]
         .map((category) => ({
           ...category,
@@ -100,13 +100,13 @@ const DrawerMenu = ({ categories, isAuthenticated }) => {
         .map((category) => ({
           ...category,
           subMenu: [...category.subMenu].sort((a, b) => {
-            // Om både a och b är nummer, sortera som nummer
+            // If both a and b are numbers, sort numerically
             const numA = parseInt(a, 10);
             const numB = parseInt(b, 10);
             if (!isNaN(numA) && !isNaN(numB)) {
               return numA - numB;
             }
-            // Annars sortera som text
+            // Otherwise sort as text
             return a.localeCompare(b);
           }),
         }))

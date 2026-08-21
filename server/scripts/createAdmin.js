@@ -16,10 +16,7 @@ const ask = (question) =>
 
 const run = async () => {
     try {
-        await mongoose.connect(process.env.MONGODB_URL, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-        });
+        await mongoose.connect(process.env.MONGODB_URL);
 
         const username = await ask("Admin username: ");
         const password = await ask("Admin password: ");
