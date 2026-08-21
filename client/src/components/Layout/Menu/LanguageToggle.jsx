@@ -13,25 +13,25 @@ const LanguageToggle = () => {
   const { i18n } = useTranslation();
 
   useEffect(() => {
-    // När komponenten monteras, kontrollera om en språk-cookie finns
+    // On mount, check if a language cookie exists
     const savedLanguage = Cookies.get("language");
     if (savedLanguage) {
       i18n.changeLanguage(savedLanguage);
     } else {
-      // Standard till norska om ingen språk-cookie hittas
+      // Default to Norwegian if no language cookie is found
       i18n.changeLanguage("no");
     }
   }, [i18n]);
 
   /**
-   * Växlar språket mellan norska och engelska.
-   * Om användaren har accepterat cookies, sparas det valda språket i en cookie.
+   * Toggles the language between Norwegian and English.
+   * If the user has accepted cookies, the selected language is saved in a cookie.
    */
   const toggleLanguage = useCallback(() => {
     const newLanguage = i18n.language === "no" ? "en" : "no";
     i18n.changeLanguage(newLanguage);
 
-    // Kontrollera om cookies har accepterats innan språk-cookien sätts
+    // Check if cookies have been accepted before setting the language cookie
     const consent = Cookies.get("cookieConsent");
     if (consent === "true") {
       Cookies.set("language", newLanguage, {

@@ -20,7 +20,7 @@ const StyledTitle = styled(Typography)(({ theme }) => ({
 const Title = () => {
   return (
     <StyledTitle variant="h6" component={Link} to="./../">
-      Norsk Fotballdraktmuseum
+      Collection Showcase
     </StyledTitle>
   );
 };
