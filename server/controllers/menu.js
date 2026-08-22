@@ -18,7 +18,7 @@ export const addCategory = (req, res) => {
       return res.status(404).json("Category already exists");
     }
 
-    const newCategory = new Menu({ mainMenu: req.body.newCategory });
+    const newCategory = new Menu({ mainMenu: req.body.newCategory.trim() });
 
     try {
       const savedCategory = await newCategory.save();
@@ -42,8 +42,8 @@ export const addSubCategory = async (req, res) => {
   try {
     const menu = await Menu.findOneAndUpdate(
       { mainMenu: req.body.category },
-      { $addToSet: { subMenu: req.body.newSubCategory } },
-      { new: true }
+      { $addToSet: { subMenu: req.body.newSubCategory.trim() } },
+      { returnDocument: "after" }
     );
 
     if (!menu) {
