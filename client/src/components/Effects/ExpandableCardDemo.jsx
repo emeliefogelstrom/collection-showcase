@@ -64,18 +64,18 @@ export function ExpandableCardDemo({ cards }) {
   }, []);
 
   const handleOpenDeleteDialog = useCallback((playerCard) => {
-  setSelectedCard(playerCard);
-  setOpenDeleteDialog(true);
-}, []);
+    setSelectedCard(playerCard);
+    setOpenDeleteDialog(true);
+  }, []);
 
   const handleCloseDeleteDialog = useCallback(() => {
     setOpenDeleteDialog(false);
   }, []);
 
   const handleDeletePlayer = useCallback(() => {
-  dispatch(deletePlayer(selectedCard._id));
-  setOpenDeleteDialog(false);
-}, [dispatch, selectedCard]);
+    dispatch(deletePlayer(selectedCard._id));
+    setOpenDeleteDialog(false);
+  }, [dispatch, selectedCard]);
 
   const handleSubmit = useCallback(
     (updatedPlayerData) => {
@@ -152,11 +152,10 @@ export function ExpandableCardDemo({ cards }) {
                     {active.name}
                   </motion.h3>
                   <motion.p
-                    layoutId={`description-${
-                      i18n.language === "no"
+                    layoutId={`description-${i18n.language === "no"
                         ? active.infoNorwegian
                         : active.infoEnglish
-                    }-${id}`}
+                      }-${id}`}
                     className="text-neutral-600  text-base pt-5"
                   >
                     {i18n.language === "no"
@@ -183,7 +182,7 @@ export function ExpandableCardDemo({ cards }) {
                 <img
                   width={100}
                   height={100}
-                  src={card.images[0]}
+                  src={card.images[0].url}
                   alt={card.name}
                   className="h-[30vh] w-full  rounded-lg object-cover object-center"
                 />

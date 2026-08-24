@@ -44,7 +44,6 @@ function AddUpdatePlayerForm({
   });
 
   useEffect(() => {
-    console.log("Player form: ", player);
     const categories = category || [];
     const subCategories = {};
 
@@ -242,7 +241,7 @@ function AddUpdatePlayerForm({
 
       const updatedPlayerData = {
         ...playerData,
-         _id: player?._id,
+        _id: player?._id,
         category: mergedCategories,
         images: existingImages.concat(imageFiles),
       };

@@ -198,7 +198,7 @@ export const addPlayer = async (req, res) => {
             originalname: file.originalname,
             mimetype: Jimp.MIME_JPEG,
           });
-          return result.Location;
+          return { url: result.Location, publicId: result.publicId };
         } catch (error) {
           console.error("Error uploading to S3:", error);
           throw new Error("File upload failed");
@@ -253,9 +253,8 @@ export const deletePlayer = async (req, res) => {
     if (!player) return res.status(404).send(`No player with id: ${id}`);
 
     await Promise.all(
-      player.images.map(async (imageUrl) => {
-        const key = imageUrl.split("/").pop();
-        await deleteFromS3(key);
+      player.images.map(async (image) => {
+        await deleteFromS3(image.publicId);
       })
     );
 
@@ -297,13 +296,17 @@ export const updatePlayer = async (req, res) => {
       ? existingPlayer.images
       : [];
 
-    const imagesToDelete = playerImages.filter((image) =>
-      existingImages.includes(image)
+    const imagesToDelete = playerImages.filter(
+      (image) => !existingImages.includes(image.url)
     );
 
     for (const image of imagesToDelete) {
-      await deleteFromS3(image);
+      await deleteFromS3(image.publicId);
     }
+
+    const remainingImages = playerImages.filter((image) =>
+      existingImages.includes(image.url)
+    );
 
     const compressedImages = req.files
       ? await Promise.all(
@@ -312,12 +315,12 @@ export const updatePlayer = async (req, res) => {
           image.resize({ w: 800 });
           const buffer = await image.getBuffer("image/jpeg", { quality: 80 });
 
-          const { Location } = await uploadToS3({
+          const result = await uploadToS3({
             buffer,
             originalname: file.originalname,
             mimetype: "image/jpeg",
           });
-          return Location;
+          return { url: result.Location, publicId: result.publicId };
         })
       )
       : [];
@@ -347,7 +350,7 @@ export const updatePlayer = async (req, res) => {
         club,
         infoEnglish,
         infoNorwegian,
-        images: [...compressedImages, ...playerImages],
+        images: [...compressedImages, ...remainingImages],
       },
       { returnDocument: "after" }
     );
