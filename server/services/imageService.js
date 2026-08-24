@@ -1,33 +1,27 @@
-import fs from "fs";
-import path from "path";
-import { fileURLToPath } from "url";
-import crypto from "crypto";
+import { v2 as cloudinary } from "cloudinary";
+import dotenv from "dotenv";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+dotenv.config();
 
-const UPLOAD_DIR = path.join(__dirname, "..", "uploads");
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
-// Skapa uploads-mappen om den inte redan finns
-if (!fs.existsSync(UPLOAD_DIR)) {
-    fs.mkdirSync(UPLOAD_DIR, { recursive: true });
-}
-
-export const uploadToS3 = async ({ buffer, originalname, mimetype }) => {
-    const ext = path.extname(originalname) || ".jpg";
-    const filename = `${crypto.randomUUID()}${ext}`;
-    const filePath = path.join(UPLOAD_DIR, filename);
-
-    fs.writeFileSync(filePath, buffer);
-
-    const baseUrl = process.env.SERVER_URL || `http://localhost:${process.env.PORT || 4000}`;
-    return { Location: `${baseUrl}/uploads/${filename}` };
+export const uploadToS3 = ({ buffer }) => {
+    return new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+            { folder: "collection-showcase" },
+            (error, result) => {
+                if (error) return reject(error);
+                resolve({ Location: result.secure_url, publicId: result.public_id });
+            }
+        );
+        stream.end(buffer);
+    });
 };
 
-export const deleteFromS3 = async (key) => {
-    const filename = key.split("/").pop();
-    const filePath = path.join(UPLOAD_DIR, filename);
-    if (fs.existsSync(filePath)) {
-        fs.unlinkSync(filePath);
-    }
+export const deleteFromS3 = async (publicId) => {
+    await cloudinary.uploader.destroy(publicId);
 };

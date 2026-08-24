@@ -38,7 +38,7 @@ export const AnimatedTestimonials = ({ images, autoplay = false }) => {
               <AnimatePresence>
                 {images.map((image, index) => (
                   <motion.div
-                    key={image}
+                    key={image.url}
                     initial={{
                       opacity: 0,
                       scale: 0.9,
@@ -67,11 +67,11 @@ export const AnimatedTestimonials = ({ images, autoplay = false }) => {
                     className="absolute inset-0 origin-bottom"
                   >
                     <img
-                      src={image}
+                      src={image.url}
                       alt="Testimonial Image"
                       draggable={false}
                       className="w-full h-[30vh] md:h-full rounded-2xl object-cover object-center cursor-pointer"
-                      onClick={() => setFullImage(image)}
+                      onClick={() => setFullImage(image.url)}
                     />
                   </motion.div>
                 ))}

@@ -15,7 +15,7 @@ const playerSchema = new Schema({
   club: String,
   infoEnglish: String,
   infoNorwegian: String,
-  images: [String],
+  images: [{ url: String, publicId: String }],
 });
 
 let Player = mongoose.model("Player", playerSchema);
