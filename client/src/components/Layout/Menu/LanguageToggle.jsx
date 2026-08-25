@@ -37,7 +37,6 @@ const LanguageToggle = () => {
       Cookies.set("language", newLanguage, {
         expires: 365,
         secure: true,
-        httpOnly: true,
       });
     }
   }, [i18n]);
