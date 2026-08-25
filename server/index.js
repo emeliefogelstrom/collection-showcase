@@ -6,6 +6,7 @@ import rateLimit from "express-rate-limit";
 import mongoose from "mongoose";
 import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
+import helmet from "helmet";
 import menus from "./routes/menus.js";
 import players from "./routes/players.js";
 import users from "./routes/users.js";
@@ -15,6 +16,7 @@ dotenv.config();
 
 const app = express();
 
+app.use(helmet());
 app.enable("trust proxy", "127.0.0.1");
 // Create a rate limiter with a limit of 100 requests per 15 minutes
 const limiter = rateLimit({
