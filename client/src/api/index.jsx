@@ -52,4 +52,4 @@ export const deleteSubCategory = (categoryId, subCategoryName) =>
 export const addPlayer = (formData) => API.post("/players", formData);
 export const updatePlayer = (id, formData) =>
   API.post(`/players/updatePlayer/${id}`, formData);
-export const deletePlayer = (formData) => API.delete(`players/${formData}`);
+export const deletePlayer = (formData) => API.delete(`/players/${formData}`);

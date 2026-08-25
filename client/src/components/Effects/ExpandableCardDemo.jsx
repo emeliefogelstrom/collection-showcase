@@ -78,23 +78,27 @@ export function ExpandableCardDemo({ cards }) {
   }, [dispatch, selectedCard]);
 
   const handleSubmit = useCallback(
-    (updatedPlayerData) => {
-      const data = new FormData();
+  (updatedPlayerData) => {
+    const data = new FormData();
 
-      data.append("name", updatedPlayerData.name);
-      data.append("club", updatedPlayerData.club);
-      data.append("infoEnglish", updatedPlayerData.infoEnglish);
-      data.append("infoNorwegian", updatedPlayerData.infoNorwegian);
-      data.append("categories", JSON.stringify(updatedPlayerData.category));
+    data.append("name", updatedPlayerData.name);
+    data.append("club", updatedPlayerData.club);
+    data.append("infoEnglish", updatedPlayerData.infoEnglish);
+    data.append("infoNorwegian", updatedPlayerData.infoNorwegian);
+    data.append("categories", JSON.stringify(updatedPlayerData.category));
+    data.append(
+      "existingImages",
+      JSON.stringify(updatedPlayerData.existingImages.map((img) => img.url))
+    );
 
-      updatedPlayerData.images.forEach((image) => {
-        data.append("images", image);
-      });
+    updatedPlayerData.images.forEach((image) => {
+      data.append("images", image);
+    });
 
-      dispatch(updatePlayer(updatedPlayerData._id, data));
-    },
-    [dispatch, cards._id]
-  );
+    dispatch(updatePlayer(updatedPlayerData._id, data));
+  },
+  [dispatch]
+);
 
   return (
     <>
@@ -182,7 +186,7 @@ export function ExpandableCardDemo({ cards }) {
                 <img
                   width={100}
                   height={100}
-                  src={card.images[0].url}
+                  src={card.images?.[0]?.url}
                   alt={card.name}
                   className="h-[30vh] w-full  rounded-lg object-cover object-center"
                 />

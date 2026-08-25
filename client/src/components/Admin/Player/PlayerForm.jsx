@@ -243,7 +243,8 @@ function AddUpdatePlayerForm({
         ...playerData,
         _id: player?._id,
         category: mergedCategories,
-        images: existingImages.concat(imageFiles),
+        existingImages: existingImages,
+        images: imageFiles,
       };
 
       handleSubmit(updatedPlayerData);

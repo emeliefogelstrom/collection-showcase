@@ -31,11 +31,11 @@ function ImageUpload({
       {existingImages?.map((image, index) => (
         <div key={index}>
           <img
-            src={image}
+            src={image.url}
             alt={`Existing ${index + 1}`}
             style={{ maxWidth: "100px", maxHeight: "100px" }}
           />
-          <IconButton onClick={handleRemoveImage}>
+          <IconButton onClick={() => handleRemoveImage(index)}>
             <DeleteIcon />
           </IconButton>
         </div>
@@ -48,7 +48,7 @@ function ImageUpload({
             alt={`Preview ${index + 1}`}
             style={{ maxWidth: "100px", maxHeight: "100px" }}
           />
-          <IconButton onClick={handleRemoveImage}>
+            <IconButton onClick={() => handleRemoveImage(existingImages.length + index)}>
             <DeleteIcon />
           </IconButton>
         </div>

@@ -4,7 +4,6 @@ import cors from "cors";
 import dotenv from "dotenv";
 import rateLimit from "express-rate-limit";
 import mongoose from "mongoose";
-import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import helmet from "helmet";
 import menus from "./routes/menus.js";
@@ -40,15 +39,8 @@ app.use(
   })
 );
 
-// Body-parser to parse incoming request bodies in a middleware before handlers.
-app.use(bodyParser.json({ extended: true, limit: "10mb" }));
-app.use(
-  bodyParser.urlencoded({
-    extended: true,
-    limit: "10mb",
-    parameterLimit: 1000,
-  })
-);
+app.use(express.json({ limit: "10mb" }));
+app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
 // Connect to routes
 app.use("/api/menus", menus);

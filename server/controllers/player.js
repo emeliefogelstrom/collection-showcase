@@ -2,7 +2,7 @@
 import mongoose from "mongoose";
 import Player from "../models/Player.js";
 import { Jimp } from "jimp";
-import { uploadToS3, deleteFromS3 } from "../services/imageService.js";
+import { uploadImage, deleteImage } from "../services/imageService.js";
 
 const escapeRegex = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
@@ -196,7 +196,7 @@ export const addPlayer = async (req, res) => {
         const buffer = await image.getBuffer("image/jpeg", { quality: 80 });
 
         try {
-          const result = await uploadToS3({
+          const result = await uploadImage({
             buffer,
             originalname: file.originalname,
             mimetype: Jimp.MIME_JPEG,
@@ -257,7 +257,7 @@ export const deletePlayer = async (req, res) => {
 
     await Promise.all(
       player.images.map(async (image) => {
-        await deleteFromS3(image.publicId);
+        await deleteImage(image.publicId);
       })
     );
 
@@ -282,8 +282,10 @@ export const updatePlayer = async (req, res) => {
     infoEnglish,
     infoNorwegian,
     categories = "[]",
-    existingImages = [],
+    existingImages: existingImagesRaw = "[]",
   } = req.body;
+
+  const existingImages = JSON.parse(existingImagesRaw);
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(404).send(`No player with id: ${id}`);
@@ -299,12 +301,12 @@ export const updatePlayer = async (req, res) => {
       ? existingPlayer.images
       : [];
 
-    const imagesToDelete = playerImages.filter(
+    const imagesImage = playerImages.filter(
       (image) => !existingImages.includes(image.url)
     );
 
-    for (const image of imagesToDelete) {
-      await deleteFromS3(image.publicId);
+    for (const image of imagesImage) {
+      await deleteImage(image.publicId);
     }
 
     const remainingImages = playerImages.filter((image) =>
@@ -318,7 +320,7 @@ export const updatePlayer = async (req, res) => {
           image.resize({ w: 800 });
           const buffer = await image.getBuffer("image/jpeg", { quality: 80 });
 
-          const result = await uploadToS3({
+          const result = await uploadImage({
             buffer,
             originalname: file.originalname,
             mimetype: "image/jpeg",
