@@ -23,7 +23,6 @@ const CookieConsent = () => {
     Cookies.set("cookieConsent", "true", {
       expires: 365,
       secure: true,
-      httpOnly: true,
     });
     setIsVisible(false);
   }, []);
@@ -32,7 +31,6 @@ const CookieConsent = () => {
     Cookies.set("cookieConsent", "false", {
       expires: 365,
       secure: true,
-      httpOnly: true,
     });
     setIsVisible(false);
   }, []);
