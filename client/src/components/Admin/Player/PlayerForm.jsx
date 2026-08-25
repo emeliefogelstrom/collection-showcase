@@ -281,7 +281,7 @@ function AddUpdatePlayerForm({
             selectedSubCategoryValues={selectedSubCategories.map(String)}
           />
         </Grid>
-        <Grid item xs={12} sm={6}>
+        <Grid item xs={12}>
           <ImageUpload
             imagePreviews={imagePreviews}
             showExistingImages={player ? true : false}
@@ -290,7 +290,7 @@ function AddUpdatePlayerForm({
             existingImages={existingImages}
           />
         </Grid>
-        <Grid item xs={12} sm={6}>
+        <Grid item xs={12} sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}>
           <Button variant="contained" color="primary" type="submit">
             {player ? "Update Player" : "Add Player"}
           </Button>

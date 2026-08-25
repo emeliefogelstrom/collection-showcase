@@ -28,31 +28,33 @@ function ImageUpload({
         onChange={handleImageChange}
         multiple
       />
-      {existingImages?.map((image, index) => (
-        <div key={index}>
-          <img
-            src={image.url}
-            alt={`Existing ${index + 1}`}
-            style={{ maxWidth: "100px", maxHeight: "100px" }}
-          />
-          <IconButton onClick={() => handleRemoveImage(index)}>
-            <DeleteIcon />
-          </IconButton>
-        </div>
-      ))}
+      <div style={{ display: "flex", flexWrap: "wrap", gap: "12px", marginTop: "12px" }}>
+        {existingImages?.map((image, index) => (
+          <div key={`existing-${index}`} style={{ textAlign: "center" }}>
+            <img
+              src={image.url}
+              alt={`Existing ${index + 1}`}
+              style={{ maxWidth: "100px", maxHeight: "100px" }}
+            />
+            <IconButton onClick={() => handleRemoveImage(index)}>
+              <DeleteIcon />
+            </IconButton>
+          </div>
+        ))}
 
-      {imagePreviews?.map((preview, index) => (
-        <div key={index}>
-          <img
-            src={preview}
-            alt={`Preview ${index + 1}`}
-            style={{ maxWidth: "100px", maxHeight: "100px" }}
-          />
+        {imagePreviews?.map((preview, index) => (
+          <div key={`preview-${index}`} style={{ textAlign: "center" }}>
+            <img
+              src={preview}
+              alt={`Preview ${index + 1}`}
+              style={{ maxWidth: "100px", maxHeight: "100px" }}
+            />
             <IconButton onClick={() => handleRemoveImage(existingImages.length + index)}>
-            <DeleteIcon />
-          </IconButton>
-        </div>
-      ))}
+              <DeleteIcon />
+            </IconButton>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
