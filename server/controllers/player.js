@@ -4,6 +4,8 @@ import Player from "../models/Player.js";
 import { Jimp } from "jimp";
 import { uploadToS3, deleteFromS3 } from "../services/imageService.js";
 
+const escapeRegex = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
 /**
  * Retrieves all players from the database.
  *
@@ -106,8 +108,9 @@ export const getPlayerById = async (req, res) => {
  */
 export const getPlayersBySearch = async (req, res) => {
   const { searchQuery, page } = req.query;
+  const safeQuery = escapeRegex(searchQuery);
 
-  if (!searchQuery) {
+  if (!safeQuery) {
     return res.status(400).json({ message: "No search query provided" });
   }
 
@@ -123,12 +126,12 @@ export const getPlayersBySearch = async (req, res) => {
       {
         $match: {
           $or: [
-            { name: { $regex: searchQuery, $options: "i" } },
-            { club: { $regex: searchQuery, $options: "i" } },
-            { "category.main": { $regex: searchQuery, $options: "i" } },
-            { "category.sub": { $regex: searchQuery, $options: "i" } },
-            { infoEnglish: { $regex: searchQuery, $options: "i" } },
-            { infoNorwegian: { $regex: searchQuery, $options: "i" } },
+            { name: { $regex: safeQuery, $options: "i" } },
+            { club: { $regex: safeQuery, $options: "i" } },
+            { "category.main": { $regex: safeQuery, $options: "i" } },
+            { "category.sub": { $regex: safeQuery, $options: "i" } },
+            { infoEnglish: { $regex: safeQuery, $options: "i" } },
+            { infoNorwegian: { $regex: safeQuery, $options: "i" } },
           ],
         },
       },
@@ -148,12 +151,12 @@ export const getPlayersBySearch = async (req, res) => {
 
     const totalMatchingPlayers = await Player.countDocuments({
       $or: [
-        { name: { $regex: searchQuery, $options: "i" } },
-        { club: { $regex: searchQuery, $options: "i" } },
-        { "category.main": { $regex: searchQuery, $options: "i" } },
-        { "category.sub": { $regex: searchQuery, $options: "i" } },
-        { infoEnglish: { $regex: searchQuery, $options: "i" } },
-        { infoNorwegian: { $regex: searchQuery, $options: "i" } },
+        { name: { $regex: safeQuery, $options: "i" } },
+        { club: { $regex: safeQuery, $options: "i" } },
+        { "category.main": { $regex: safeQuery, $options: "i" } },
+        { "category.sub": { $regex: safeQuery, $options: "i" } },
+        { infoEnglish: { $regex: safeQuery, $options: "i" } },
+        { infoNorwegian: { $regex: safeQuery, $options: "i" } },
       ],
     });
 
