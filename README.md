@@ -116,6 +116,19 @@ node scripts/createAdmin.js
 
 You'll be prompted for a username and password interactively.
 
+## Known Limitations & Roadmap
+
+- **Automated tests**: not yet implemented. Manual testing has been
+  thorough throughout development, but a Jest/Supertest test suite
+  is a planned addition.
+- **Category sub-values**: currently expected to be specific years
+  (e.g. `"2023"`) rather than decade labels — see DECISIONS.md for
+  why.
+- **UI library**: a partial Tailwind migration means MUI and Tailwind
+  are both still in use — see DECISIONS.md.
+- **React Router**: still on v6; upgrading to v7 is a planned,
+  low-priority upgrade.
+
 ## License
 
 Apache-2.0
