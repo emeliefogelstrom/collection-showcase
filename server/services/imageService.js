@@ -9,7 +9,7 @@ cloudinary.config({
     api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-export const uploadToS3 = ({ buffer }) => {
+export const uploadImage = ({ buffer }) => {
     return new Promise((resolve, reject) => {
         const stream = cloudinary.uploader.upload_stream(
             { folder: "collection-showcase" },
@@ -22,6 +22,6 @@ export const uploadToS3 = ({ buffer }) => {
     });
 };
 
-export const deleteFromS3 = async (publicId) => {
+export const deleteImage = async (publicId) => {
     await cloudinary.uploader.destroy(publicId);
 };

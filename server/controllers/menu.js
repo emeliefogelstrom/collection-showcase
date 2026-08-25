@@ -1,9 +1,6 @@
 // controllers/menu.js
-import express from "express";
 import mongoose from "mongoose";
 import Menu from "../models/Menu.js";
-
-const router = express.Router();
 
 /**
  * Adds a new category to the menu.
