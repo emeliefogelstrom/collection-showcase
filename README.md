@@ -118,6 +118,13 @@ You'll be prompted for a username and password interactively.
 
 ## Known Limitations & Roadmap
 
+- **Category selection on update**: when editing an existing item,
+  previously selected categories aren't visually pre-filled in the
+  category dropdown, even though the underlying data is intact and
+  saved correctly. Cosmetic, but worth fixing for clarity.
+- **Image ordering**: there's currently no way to control the order
+  images appear in — they're stored and displayed in upload order,
+  with no drag-and-drop reordering.
 - **Automated tests**: not yet implemented. Manual testing has been
   thorough throughout development, but a Jest/Supertest test suite
   is a planned addition.
