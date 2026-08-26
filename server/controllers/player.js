@@ -203,7 +203,7 @@ export const addPlayer = async (req, res) => {
           });
           return { url: result.Location, publicId: result.publicId };
         } catch (error) {
-          console.error("Error uploading to S3:", error);
+          console.error("Error uploading image:", error);
           throw new Error("File upload failed");
         }
       })
