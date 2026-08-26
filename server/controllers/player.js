@@ -138,13 +138,13 @@ export const getPlayersBySearch = async (req, res) => {
       {
         $sort: {
           "category.main": 1,
+          "category.sub": 1,
           name: 1,
           club: 1,
           infoEnglish: 1,
           infoNorwegian: 1,
         },
       },
-      { $sort: { "category.sub": 1, name: 1 } },
       { $skip: startIndex },
       { $limit: LIMIT },
     ]);
