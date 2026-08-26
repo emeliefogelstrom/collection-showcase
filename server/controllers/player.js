@@ -5,6 +5,7 @@ import { Jimp } from "jimp";
 import { uploadImage, deleteImage } from "../services/imageService.js";
 
 const escapeRegex = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+const allowedMimeTypes = ["image/jpeg", "image/png", "image/gif"];
 
 /**
  * Retrieves all players from the database.
@@ -138,13 +139,13 @@ export const getPlayersBySearch = async (req, res) => {
       {
         $sort: {
           "category.main": 1,
-          "category.sub": 1,
           name: 1,
           club: 1,
           infoEnglish: 1,
           infoNorwegian: 1,
         },
       },
+      { $sort: { "category.sub": 1, name: 1 } },
       { $skip: startIndex },
       { $limit: LIMIT },
     ]);
@@ -181,7 +182,6 @@ export const addPlayer = async (req, res) => {
   const { name, club, infoEnglish, infoNorwegian, categories } = req.body;
 
   let categoriesToSplit = JSON.parse(categories);
-  const allowedMimeTypes = ["image/jpeg", "image/png", "image/gif"];
 
   if (!req.userId) return res.json({ message: "Unauthenticated" });
 
@@ -316,6 +316,9 @@ export const updatePlayer = async (req, res) => {
     const compressedImages = req.files
       ? await Promise.all(
         req.files.map(async (file) => {
+          if (!allowedMimeTypes.includes(file.mimetype)) {
+            throw new Error(`Invalid file type: ${file.mimetype}`);
+          }
           const image = await Jimp.read(file.buffer);
           image.resize({ w: 800 });
           const buffer = await image.getBuffer("image/jpeg", { quality: 80 });
