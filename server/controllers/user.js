@@ -69,8 +69,9 @@ export const signin = async (req, res) => {
  * @param {object} res - The response object for sending responses.
  */
 export const signout = async (req, res) => {
-  const token = req.headers.authorization?.split(" ")[1];
-  res.clearCookie(token); // Remove the cookie
+  // Logout is handled client-side by removing the jwtToken cookie
+  // (see AuthContext.jsx). This endpoint exists as a place to add
+  // server-side token invalidation (e.g. a blacklist) in the future.
   res.status(200).json({ message: "Logout successful" });
 };
 
