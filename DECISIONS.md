@@ -19,6 +19,18 @@ migration would touch a large number of files for no functional gain,
 so it's deliberately deprioritized in favor of feature and security work.
 Noted here as a tracked decision, not an oversight.
 
+## Mongoose schema validation: minimal by design (for now)
+The `Player` schema currently defines fields with basic types only
+(`name: String`, `club: String`, etc.) without `required`, `trim`,
+or length constraints. Input sanitization (DOMPurify) already
+protects against malicious content on the client side, and auth
+middleware protects write access, so this isn't a security gap —
+but stricter schema-level validation (required fields, trimmed
+strings, reasonable length limits) would make the API more robust
+against malformed data. Deferred rather than added hastily, since
+tightening validation on a schema with existing production data
+deserves its own testing pass rather than a quick addition.
+
 ## Database: MongoDB with Mongoose
 A document-based structure fits the variable, nested shape of collection
 items (categories, sub-categories, multiple images per item) more
