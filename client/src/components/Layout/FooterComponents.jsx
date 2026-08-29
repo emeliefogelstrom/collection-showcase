@@ -52,9 +52,9 @@ const FooterMessage = () => {
 const FooterLinks = () => {
   return (
     <FooterLinksText variant="body2" component="h2">
-      &copy; {new Date().getFullYear()}{" "}
+      &copy; {new Date().getFullYear()} Collection Showcase — a portfolio demo project. Content shown is sample data for demonstration purposes only.{" "}
       <FooterLink to="https://github.com/emeliefogelstrom/collection-showcase">
-        Collection Showcase
+        View source on GitHub
       </FooterLink>
     </FooterLinksText>
   );
