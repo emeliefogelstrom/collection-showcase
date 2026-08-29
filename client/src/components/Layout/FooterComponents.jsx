@@ -52,9 +52,10 @@ const FooterMessage = () => {
 const FooterLinks = () => {
   return (
     <FooterLinksText variant="body2" component="h2">
-      &copy;{new Date().getFullYear()}{" "}
-      <FooterLink to="https://www.limestoneweb.se">LIMESTONEWEB.SE</FooterLink>{" "}
-      | All rights reserved | Terms Of Service | Privacy |
+      &copy; {new Date().getFullYear()}{" "}
+      <FooterLink to="https://github.com/emeliefogelstrom/collection-showcase">
+        Collection Showcase
+      </FooterLink>
     </FooterLinksText>
   );
 };

@@ -1,4 +1,5 @@
 import React, { useCallback } from "react";
+import { useLocation } from "react-router-dom";
 import { Typography } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import { useDispatch } from "react-redux";
@@ -10,7 +11,7 @@ import {
 } from "./styles"; // Importera de nya stilarna
 import ScrollDialog from "../../dialog";
 import PlayerForm from "../../Admin/Player/PlayerForm";
-import { addPlayer } from "../../../actions/players";
+import { addPlayer, getPlayers, getPlayersBySearch } from "../../../actions/players";
 
 /**
  * AddNewPlayer component allows users to add a new player
@@ -24,9 +25,10 @@ import { addPlayer } from "../../../actions/players";
  */
 const AddNewPlayer = ({ handleOpenDialog, handleCloseDialog, openDialog }) => {
   const dispatch = useDispatch();
+  const location = useLocation();
 
   const handleSubmit = useCallback(
-    (updatedPlayerData) => {
+    async (updatedPlayerData) => {
       const data = new FormData();
 
       data.append("name", updatedPlayerData.name);
@@ -55,9 +57,20 @@ const AddNewPlayer = ({ handleOpenDialog, handleCloseDialog, openDialog }) => {
         data.append("images", img);
       });
 
-      dispatch(addPlayer(data));
+      await dispatch(addPlayer(data));
+
+      const params = new URLSearchParams(location.search);
+      const searchQuery = params.get("searchQuery");
+      const key = params.get("key");
+      const page = params.get("page") || 1;
+
+      if (searchQuery) {
+        dispatch(getPlayersBySearch(searchQuery, page));
+      } else if (key) {
+        dispatch(getPlayers(key, page));
+      }
     },
-    [dispatch]
+    [dispatch, location.search]
   );
 
   const handleKeyDown = useCallback(
