@@ -78,27 +78,27 @@ export function ExpandableCardDemo({ cards }) {
   }, [dispatch, selectedCard]);
 
   const handleSubmit = useCallback(
-  (updatedPlayerData) => {
-    const data = new FormData();
+    (updatedPlayerData) => {
+      const data = new FormData();
 
-    data.append("name", updatedPlayerData.name);
-    data.append("club", updatedPlayerData.club);
-    data.append("infoEnglish", updatedPlayerData.infoEnglish);
-    data.append("infoNorwegian", updatedPlayerData.infoNorwegian);
-    data.append("categories", JSON.stringify(updatedPlayerData.category));
-    data.append(
-      "existingImages",
-      JSON.stringify(updatedPlayerData.existingImages.map((img) => img.url))
-    );
+      data.append("name", updatedPlayerData.name);
+      data.append("club", updatedPlayerData.club);
+      data.append("infoEnglish", updatedPlayerData.infoEnglish);
+      data.append("infoNorwegian", updatedPlayerData.infoNorwegian);
+      data.append("categories", JSON.stringify(updatedPlayerData.category));
+      data.append(
+        "existingImages",
+        JSON.stringify(updatedPlayerData.existingImages.map((img) => img.url))
+      );
 
-    updatedPlayerData.images.forEach((image) => {
-      data.append("images", image);
-    });
+      updatedPlayerData.images.forEach((image) => {
+        data.append("images", image);
+      });
 
-    dispatch(updatePlayer(updatedPlayerData._id, data));
-  },
-  [dispatch]
-);
+      dispatch(updatePlayer(updatedPlayerData._id, data));
+    },
+    [dispatch]
+  );
 
   return (
     <>
@@ -157,8 +157,8 @@ export function ExpandableCardDemo({ cards }) {
                   </motion.h3>
                   <motion.p
                     layoutId={`description-${i18n.language === "no"
-                        ? active.infoNorwegian
-                        : active.infoEnglish
+                      ? active.infoNorwegian
+                      : active.infoEnglish
                       }-${id}`}
                     className="text-neutral-600  text-base pt-5"
                   >
@@ -188,7 +188,7 @@ export function ExpandableCardDemo({ cards }) {
                   height={100}
                   src={card.images?.[0]?.url}
                   alt={card.name}
-                  className="h-[30vh] w-full  rounded-lg object-cover object-center"
+                  className="h-[30vh] w-full  rounded-lg object-cover" style={{ objectPosition: "50% 30%" }}
                 />
               </motion.div>
               <div className="flex justify-center items-center flex-col relative">
